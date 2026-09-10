@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ni.edu.uam.facturacion.controller.ProductoController">
+
+    <top>
+        <Label text="Gestión de Productos"
+               style="-fx-font-size: 20px; -fx-font-weight: bold;">
+            <BorderPane.margin>
+                <Insets top="15" right="15" bottom="15" left="15"/>
+            </BorderPane.margin>
+        </Label>
+    </top>
+
+    <center>
+        <VBox spacing="15">
+
+            <GridPane hgap="10" vgap="10">
+
+                <Label text="Código:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <TextField fx:id="txtCodigo"
+                           promptText="Código único"
+                           GridPane.columnIndex="1"
+                           GridPane.rowIndex="0"/>
+
+                <Label text="Nombre:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <TextField fx:id="txtNombre"
+                           promptText="Nombre"
+                           GridPane.columnIndex="1"
+                           GridPane.rowIndex="1"/>
+
+                <Label text="Categoría:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                <ComboBox fx:id="cmbCategoria"
+                          prefWidth="250"
+                          GridPane.columnIndex="1"
+                          GridPane.rowIndex="2"/>
+
+                <Label text="Precio:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                <TextField fx:id="txtPrecio"
+                           promptText="Precio de venta"
+                           GridPane.columnIndex="1"
+                           GridPane.rowIndex="3"/>
+
+                <Label text="Existencia:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                <TextField fx:id="txtExistencia"
+                           promptText="Existencia"
+                           GridPane.columnIndex="1"
+                           GridPane.rowIndex="4"/>
+
+                <Label text="Estado:" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+                <CheckBox fx:id="chkActivo"
+                          text="Activo"
+                          GridPane.columnIndex="1"
+                          GridPane.rowIndex="5"/>
+
+                <Label text="Imagen:" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+
+                <ImageView fx:id="imgProducto"
+                           fitHeight="150"
+                           fitWidth="150"
+                           preserveRatio="true"
+                           GridPane.columnIndex="2"
+                           GridPane.rowIndex="1"
+                           GridPane.rowSpan="4"/>
+
+                <Button fx:id="btnImagen"
+                        text="Seleccionar imagen"
+                        onAction="#seleccionarImagen"
+                        GridPane.columnIndex="2"
+                        GridPane.rowIndex="5"/>
+
+            </GridPane>
+
+            <HBox spacing="10">
+                <Button fx:id="btnGuardar"
+                        text="Guardar"
+                        onAction="#guardar"/>
+
+                <Button fx:id="btnCerrar"
+                        text="Cerrar"
+                        onAction="#cerrar"/>
+            </HBox>
+
+            <TableView fx:id="tblProductos"
+                       prefHeight="300">
+
+                <columns>
+
+                    <TableColumn fx:id="colCodigo"
+                                 text="Código"
+                                 prefWidth="100"/>
+
+                    <TableColumn fx:id="colNombre"
+                                 text="Nombre"
+                                 prefWidth="180"/>
+
+                    <TableColumn fx:id="colCategoria"
+                                 text="Categoría"
+                                 prefWidth="150"/>
+
+                    <TableColumn fx:id="colPrecio"
+                                 text="Precio"
+                                 prefWidth="120"/>
+
+                    <TableColumn fx:id="colExistencia"
+                                 text="Existencia"
+                                 prefWidth="120"/>
+
+                    <TableColumn fx:id="colActivo"
+                                 text="Estado"
+                                 prefWidth="100"/>
+
+                </columns>
+
+            </TableView>
+
+        </VBox>
+    </center>
+
+</BorderPane>

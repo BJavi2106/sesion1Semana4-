@@ -24,7 +24,7 @@ public class MenuPrincipalController {
 
             SceneManager.cambiarEscena(
                     stage,
-                    "/ni/edu/uam/facturacion/fxml/producto.fxml",
+                    "/ni/edu/uam/facturacion/fxml/producto-view.fxml",
                     "Gestión de Productos"
             );
 
