@@ -84,6 +84,8 @@ public class ProductoController {
 
         configurarValidacionVisual();
 
+        configurarControlDeEntrada();
+
         chkActivo.setSelected(true);
 
         actualizarContador();
@@ -200,11 +202,6 @@ public class ProductoController {
                 }
         );
 
-        /*
-         * Interacción profesional:
-         * cuando el usuario selecciona un producto,
-         * el sistema reconoce inmediatamente la selección.
-         */
         tblProductos.getSelectionModel()
                 .selectedItemProperty()
                 .addListener(
@@ -263,12 +260,8 @@ public class ProductoController {
         }
 
         /*
-         * Por ahora la selección solamente se reconoce.
-         * No cargamos los datos en el formulario para evitar
-         * alterar accidentalmente el flujo de registro.
-         *
-         * Esta base permitirá agregar posteriormente
-         * edición y eliminación de manera segura.
+         * La selección queda preparada para futuras
+         * operaciones como edición y eliminación.
          */
     }
 
@@ -384,6 +377,162 @@ public class ProductoController {
         cmbCategoria.valueProperty().addListener(
                 (observable, anterior, nuevo) ->
                         validarCategoria()
+        );
+    }
+
+    private void configurarControlDeEntrada() {
+
+        configurarControlCodigo();
+
+        configurarControlNombre();
+
+        configurarControlPrecio();
+
+        configurarControlExistencia();
+
+        configurarControlBusqueda();
+    }
+
+    private void configurarControlCodigo() {
+
+        txtCodigo.textProperty().addListener(
+                (observable, anterior, nuevo) -> {
+
+                    if (nuevo == null) {
+                        return;
+                    }
+
+                    String limpio =
+                            nuevo.replaceAll("^\\s+", "");
+
+                    if (limpio.length() > 20) {
+
+                        limpio =
+                                limpio.substring(0, 20);
+                    }
+
+                    if (!limpio.equals(nuevo)) {
+
+                        txtCodigo.setText(limpio);
+
+                        txtCodigo.positionCaret(
+                                txtCodigo.getText().length()
+                        );
+                    }
+                }
+        );
+    }
+
+    private void configurarControlNombre() {
+
+        txtNombre.textProperty().addListener(
+                (observable, anterior, nuevo) -> {
+
+                    if (nuevo == null) {
+                        return;
+                    }
+
+                    String limpio =
+                            nuevo.replaceAll("^\\s+", "");
+
+                    if (limpio.length() > 80) {
+
+                        limpio =
+                                limpio.substring(0, 80);
+                    }
+
+                    if (!limpio.equals(nuevo)) {
+
+                        txtNombre.setText(limpio);
+
+                        txtNombre.positionCaret(
+                                txtNombre.getText().length()
+                        );
+                    }
+                }
+        );
+    }
+
+    private void configurarControlPrecio() {
+
+        txtPrecio.textProperty().addListener(
+                (observable, anterior, nuevo) -> {
+
+                    if (nuevo == null) {
+                        return;
+                    }
+
+                    if (!nuevo.matches("\\d*(\\.\\d*)?")) {
+
+                        txtPrecio.setText(anterior);
+
+                        txtPrecio.positionCaret(
+                                txtPrecio.getText().length()
+                        );
+
+                        return;
+                    }
+
+                    if (nuevo.length() > 12) {
+
+                        txtPrecio.setText(anterior);
+
+                        txtPrecio.positionCaret(
+                                txtPrecio.getText().length()
+                        );
+                    }
+                }
+        );
+    }
+
+    private void configurarControlExistencia() {
+
+        txtExistencia.textProperty().addListener(
+                (observable, anterior, nuevo) -> {
+
+                    if (nuevo == null) {
+                        return;
+                    }
+
+                    if (!nuevo.matches("\\d*")) {
+
+                        txtExistencia.setText(anterior);
+
+                        txtExistencia.positionCaret(
+                                txtExistencia.getText().length()
+                        );
+
+                        return;
+                    }
+
+                    if (nuevo.length() > 9) {
+
+                        txtExistencia.setText(anterior);
+
+                        txtExistencia.positionCaret(
+                                txtExistencia.getText().length()
+                        );
+                    }
+                }
+        );
+    }
+
+    private void configurarControlBusqueda() {
+
+        txtBuscar.textProperty().addListener(
+                (observable, anterior, nuevo) -> {
+
+                    if (nuevo != null && nuevo.length() > 80) {
+
+                        txtBuscar.setText(
+                                nuevo.substring(0, 80)
+                        );
+
+                        txtBuscar.positionCaret(
+                                txtBuscar.getText().length()
+                        );
+                    }
+                }
         );
     }
 
