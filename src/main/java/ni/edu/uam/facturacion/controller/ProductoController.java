@@ -7,6 +7,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -61,10 +62,15 @@ public class ProductoController {
     @FXML
     private TableColumn<Producto, Integer> colExistencia;
 
+    @FXML
+    private TableColumn<Producto, Boolean> colActivo;
+
+
     private final ObservableList<Producto> productos =
             FXCollections.observableArrayList();
 
     private String rutaImagen;
+
 
     @FXML
     private void initialize() {
@@ -80,6 +86,7 @@ public class ProductoController {
         tblProductos.setItems(productos);
 
         chkActivo.setSelected(true);
+
 
         colCodigo.setCellValueFactory(
                 new javafx.scene.control.cell.PropertyValueFactory<>("codigo")
@@ -100,7 +107,33 @@ public class ProductoController {
         colExistencia.setCellValueFactory(
                 new javafx.scene.control.cell.PropertyValueFactory<>("existencia")
         );
+
+        colActivo.setCellValueFactory(
+                new javafx.scene.control.cell.PropertyValueFactory<>("activo")
+        );
+
+
+        colActivo.setCellFactory(column ->
+                new TableCell<>() {
+
+                    @Override
+                    protected void updateItem(
+                            Boolean activo,
+                            boolean empty
+                    ) {
+
+                        super.updateItem(activo, empty);
+
+                        if (empty || activo == null) {
+                            setText(null);
+                        } else {
+                            setText(activo ? "Activo" : "Inactivo");
+                        }
+                    }
+                }
+        );
     }
+
 
     @FXML
     private void seleccionarImagen() {
@@ -132,6 +165,7 @@ public class ProductoController {
         }
     }
 
+
     @FXML
     private void guardar() {
 
@@ -149,17 +183,22 @@ public class ProductoController {
             return;
         }
 
+
         try {
 
-            BigDecimal precio = new BigDecimal(
-                    txtPrecio.getText().trim()
-            );
+            BigDecimal precio =
+                    new BigDecimal(
+                            txtPrecio.getText().trim()
+                    );
 
-            int existencia = Integer.parseInt(
-                    txtExistencia.getText().trim()
-            );
+            int existencia =
+                    Integer.parseInt(
+                            txtExistencia.getText().trim()
+                    );
 
-            if (precio.signum() <= 0 || existencia < 0) {
+
+            if (precio.signum() <= 0
+                    || existencia < 0) {
 
                 mensaje(
                         Alert.AlertType.WARNING,
@@ -168,6 +207,7 @@ public class ProductoController {
 
                 return;
             }
+
 
             Producto producto = new Producto(
                     null,
@@ -180,12 +220,15 @@ public class ProductoController {
                     chkActivo.isSelected()
             );
 
+
             productos.add(producto);
+
 
             mensaje(
                     Alert.AlertType.INFORMATION,
                     "Producto agregado correctamente."
             );
+
 
             limpiar();
 
@@ -198,24 +241,32 @@ public class ProductoController {
         }
     }
 
+
     @FXML
     private void cerrar() {
 
-        Stage stage = (Stage) txtCodigo
-                .getScene()
-                .getWindow();
+        Stage stage =
+                (Stage) txtCodigo
+                        .getScene()
+                        .getWindow();
 
         stage.close();
     }
 
+
     private void limpiar() {
 
         txtCodigo.clear();
+
         txtNombre.clear();
+
         txtPrecio.clear();
+
         txtExistencia.clear();
 
-        cmbCategoria.getSelectionModel().clearSelection();
+        cmbCategoria
+                .getSelectionModel()
+                .clearSelection();
 
         chkActivo.setSelected(true);
 
@@ -223,6 +274,7 @@ public class ProductoController {
 
         rutaImagen = null;
     }
+
 
     private void mensaje(
             Alert.AlertType tipo,
