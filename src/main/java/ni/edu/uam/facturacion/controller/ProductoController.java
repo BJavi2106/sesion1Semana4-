@@ -118,6 +118,8 @@ public class ProductoController {
         chkActivo.setSelected(true);
 
         actualizarContador();
+
+        txtCodigo.requestFocus();
     }
 
 
@@ -321,7 +323,8 @@ public class ProductoController {
 
         if (lblContador != null) {
 
-            int cantidad = productosFiltrados.size();
+            int cantidad =
+                    productosFiltrados.size();
 
             lblContador.setText(
                     "Mostrando "
@@ -338,7 +341,7 @@ public class ProductoController {
 
         txtCodigo.textProperty().addListener(
                 (observable, anterior, nuevo) ->
-                        validarTexto(txtCodigo)
+                        validarCodigoVisual()
         );
 
         txtNombre.textProperty().addListener(
@@ -360,6 +363,46 @@ public class ProductoController {
                 (observable, anterior, nuevo) ->
                         validarCategoria()
         );
+    }
+
+
+    private void validarCodigoVisual() {
+
+        String codigo =
+                txtCodigo.getText().trim();
+
+        if (codigo.isEmpty()) {
+
+            marcarError(txtCodigo);
+
+            return;
+        }
+
+        if (codigoExiste(codigo)) {
+
+            marcarError(txtCodigo);
+
+        } else {
+
+            limpiarError(txtCodigo);
+        }
+    }
+
+
+    private boolean codigoExiste(String codigo) {
+
+        for (Producto producto : productos) {
+
+            if (producto.getCodigo() != null
+                    && producto.getCodigo()
+                    .trim()
+                    .equalsIgnoreCase(codigo)) {
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
 
@@ -397,6 +440,7 @@ public class ProductoController {
         if (texto.isEmpty()) {
 
             marcarError(txtPrecio);
+
             return;
         }
 
@@ -429,6 +473,7 @@ public class ProductoController {
         if (texto.isEmpty()) {
 
             marcarError(txtExistencia);
+
             return;
         }
 
@@ -483,7 +528,7 @@ public class ProductoController {
         configurarTooltip(
                 txtCodigo,
                 "Código del producto\n"
-                        + "Identificador del producto dentro del sistema."
+                        + "Identificador único del producto."
         );
 
         configurarTooltip(
@@ -495,7 +540,7 @@ public class ProductoController {
         configurarTooltip(
                 cmbCategoria,
                 "Categoría\n"
-                        + "Seleccione la categoría a la que pertenece el producto."
+                        + "Seleccione la categoría del producto."
         );
 
         configurarTooltip(
@@ -537,7 +582,7 @@ public class ProductoController {
         configurarTooltip(
                 txtBuscar,
                 "Buscar productos\n"
-                        + "Filtra el listado por código, nombre o categoría."
+                        + "Filtra por código, nombre o categoría."
         );
 
         configurarTooltip(
@@ -617,16 +662,20 @@ public class ProductoController {
     @FXML
     private void guardar() {
 
-        boolean datosCompletos =
-                !txtCodigo.getText().isBlank()
-                        && !txtNombre.getText().isBlank()
-                        && !txtPrecio.getText().isBlank()
-                        && !txtExistencia.getText().isBlank()
-                        && cmbCategoria.getValue() != null;
+        String codigo =
+                txtCodigo.getText().trim();
 
-        if (!datosCompletos) {
+        String nombre =
+                txtNombre.getText().trim();
 
-            validarTexto(txtCodigo);
+
+        if (codigo.isEmpty()
+                || nombre.isEmpty()
+                || txtPrecio.getText().isBlank()
+                || txtExistencia.getText().isBlank()
+                || cmbCategoria.getValue() == null) {
+
+            validarCodigoVisual();
             validarTexto(txtNombre);
             validarPrecio();
             validarExistencia();
@@ -637,6 +686,23 @@ public class ProductoController {
                     "Datos incompletos",
                     "Complete los campos obligatorios."
             );
+
+            return;
+        }
+
+
+        if (codigoExiste(codigo)) {
+
+            marcarError(txtCodigo);
+
+            mostrarMensaje(
+                    Alert.AlertType.WARNING,
+                    "Código duplicado",
+                    "Ya existe un producto registrado "
+                            + "con el código \"" + codigo + "\"."
+            );
+
+            txtCodigo.requestFocus();
 
             return;
         }
@@ -675,8 +741,8 @@ public class ProductoController {
             Producto producto =
                     new Producto(
                             null,
-                            txtCodigo.getText().trim(),
-                            txtNombre.getText().trim(),
+                            codigo,
+                            nombre,
                             cmbCategoria.getValue(),
                             precio,
                             existencia,
@@ -701,6 +767,8 @@ public class ProductoController {
 
 
             limpiar();
+
+            txtCodigo.requestFocus();
 
         } catch (NumberFormatException e) {
 
