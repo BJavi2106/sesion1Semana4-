@@ -44,8 +44,10 @@ public class ProductoController {
 
     @FXML private Button btnImagen;
     @FXML private Button btnGuardar;
+    @FXML private Button btnCancelarEdicion;
     @FXML private Button btnCerrar;
     @FXML private Button btnLimpiarBusqueda;
+    @FXML private Button btnEditar;
 
     @FXML private TableView<Producto> tblProductos;
 
@@ -65,6 +67,8 @@ public class ProductoController {
             FXCollections.observableArrayList();
 
     private String rutaImagen;
+
+    private Producto productoEnEdicion;
 
     private final NumberFormat formatoMoneda =
             NumberFormat.getCurrencyInstance(
@@ -89,6 +93,8 @@ public class ProductoController {
         chkActivo.setSelected(true);
 
         actualizarContador();
+
+        establecerModoRegistro();
 
         txtCodigo.requestFocus();
     }
@@ -259,10 +265,7 @@ public class ProductoController {
             return;
         }
 
-        /*
-         * La selección queda preparada para futuras
-         * operaciones como edición y eliminación.
-         */
+        btnEditar.setDisable(false);
     }
 
     private void configurarBusqueda() {
@@ -522,7 +525,8 @@ public class ProductoController {
         txtBuscar.textProperty().addListener(
                 (observable, anterior, nuevo) -> {
 
-                    if (nuevo != null && nuevo.length() > 80) {
+                    if (nuevo != null
+                            && nuevo.length() > 80) {
 
                         txtBuscar.setText(
                                 nuevo.substring(0, 80)
@@ -550,7 +554,17 @@ public class ProductoController {
 
         if (codigoExiste(codigo)) {
 
-            marcarError(txtCodigo);
+            limpiarError(txtCodigo);
+
+            if (productoEnEdicion == null
+                    || productoEnEdicion.getCodigo() == null
+                    || !productoEnEdicion
+                    .getCodigo()
+                    .trim()
+                    .equalsIgnoreCase(codigo)) {
+
+                marcarError(txtCodigo);
+            }
 
         } else {
 
@@ -734,7 +748,19 @@ public class ProductoController {
         configurarTooltip(
                 btnGuardar,
                 "Guardar producto\n"
-                        + "Registra el producto con los datos ingresados."
+                        + "Registra o actualiza el producto."
+        );
+
+        configurarTooltip(
+                btnCancelarEdicion,
+                "Cancelar edición\n"
+                        + "Cancela los cambios y vuelve al modo de registro."
+        );
+
+        configurarTooltip(
+                btnEditar,
+                "Editar producto\n"
+                        + "Carga el producto seleccionado para modificarlo."
         );
 
         configurarTooltip(
@@ -821,6 +847,127 @@ public class ProductoController {
     }
 
     @FXML
+    private void editarProducto() {
+
+        Producto seleccionado =
+                tblProductos
+                        .getSelectionModel()
+                        .getSelectedItem();
+
+        if (seleccionado == null) {
+
+            mostrarMensaje(
+                    Alert.AlertType.WARNING,
+                    "Producto no seleccionado",
+                    "Seleccione un producto de la tabla "
+                            + "para poder editarlo."
+            );
+
+            return;
+        }
+
+        productoEnEdicion = seleccionado;
+
+        txtCodigo.setText(
+                seleccionado.getCodigo()
+        );
+
+        txtNombre.setText(
+                seleccionado.getNombre()
+        );
+
+        cmbCategoria.setValue(
+                seleccionado.getCategoria()
+        );
+
+        txtPrecio.setText(
+                seleccionado.getPrecioVenta()
+                        .toPlainString()
+        );
+
+        txtExistencia.setText(
+                String.valueOf(
+                        seleccionado.getExistencia()
+                )
+        );
+
+        chkActivo.setSelected(
+                seleccionado.isActivo()
+        );
+
+        rutaImagen =
+                seleccionado.getRutaImagen();
+
+        if (rutaImagen != null
+                && !rutaImagen.isBlank()) {
+
+            try {
+
+                imgProducto.setImage(
+                        new Image(rutaImagen)
+                );
+
+            } catch (Exception e) {
+
+                imgProducto.setImage(null);
+            }
+
+        } else {
+
+            imgProducto.setImage(null);
+        }
+
+        btnGuardar.setText(
+                "Guardar cambios"
+        );
+
+        btnCancelarEdicion.setVisible(true);
+        btnCancelarEdicion.setManaged(true);
+
+        txtCodigo.requestFocus();
+
+        validarCodigoVisual();
+    }
+
+    @FXML
+    private void cancelarEdicion() {
+
+        establecerModoRegistro();
+
+        limpiar();
+
+        txtCodigo.requestFocus();
+    }
+
+    private void establecerModoRegistro() {
+
+        productoEnEdicion = null;
+
+        if (btnGuardar != null) {
+
+            btnGuardar.setText(
+                    "Guardar producto"
+            );
+        }
+
+        if (btnCancelarEdicion != null) {
+
+            btnCancelarEdicion.setVisible(false);
+            btnCancelarEdicion.setManaged(false);
+        }
+
+        if (btnEditar != null) {
+
+            btnEditar.setDisable(
+                    tblProductos == null
+                            || tblProductos
+                            .getSelectionModel()
+                            .getSelectedItem() == null
+            );
+        }
+    }
+
+    @FXML
     private void guardar() {
 
         String codigo =
@@ -854,14 +1001,14 @@ public class ProductoController {
             return;
         }
 
-        if (codigoExiste(codigo)) {
+        if (codigoExisteParaOtroProducto(codigo)) {
 
             marcarError(txtCodigo);
 
             mostrarMensaje(
                     Alert.AlertType.WARNING,
                     "Código duplicado",
-                    "Ya existe un producto registrado "
+                    "Ya existe otro producto registrado "
                             + "con el código \""
                             + codigo
                             + "\"."
@@ -905,30 +1052,74 @@ public class ProductoController {
                 return;
             }
 
-            Producto producto =
-                    new Producto(
-                            null,
-                            codigo,
-                            nombre,
-                            cmbCategoria.getValue(),
-                            precio,
-                            existencia,
-                            rutaImagen,
-                            chkActivo.isSelected()
-                    );
+            if (productoEnEdicion == null) {
 
-            productos.add(producto);
+                Producto producto =
+                        new Producto(
+                                null,
+                                codigo,
+                                nombre,
+                                cmbCategoria.getValue(),
+                                precio,
+                                existencia,
+                                rutaImagen,
+                                chkActivo.isSelected()
+                        );
 
-            filtrarProductos(
-                    txtBuscar.getText()
-            );
+                productos.add(producto);
 
-            mostrarMensaje(
-                    Alert.AlertType.INFORMATION,
-                    "Producto registrado",
-                    "El producto se agregó correctamente "
-                            + "al catálogo."
-            );
+                filtrarProductos(
+                        txtBuscar.getText()
+                );
+
+                mostrarMensaje(
+                        Alert.AlertType.INFORMATION,
+                        "Producto registrado",
+                        "El producto se agregó correctamente "
+                                + "al catálogo."
+                );
+
+            } else {
+
+                productoEnEdicion.setCodigo(codigo);
+
+                productoEnEdicion.setNombre(nombre);
+
+                productoEnEdicion.setCategoria(
+                        cmbCategoria.getValue()
+                );
+
+                productoEnEdicion.setPrecioVenta(
+                        precio
+                );
+
+                productoEnEdicion.setExistencia(
+                        existencia
+                );
+
+                productoEnEdicion.setRutaImagen(
+                        rutaImagen
+                );
+
+                productoEnEdicion.setActivo(
+                        chkActivo.isSelected()
+                );
+
+                tblProductos.refresh();
+
+                filtrarProductos(
+                        txtBuscar.getText()
+                );
+
+                mostrarMensaje(
+                        Alert.AlertType.INFORMATION,
+                        "Producto actualizado",
+                        "Los cambios del producto se "
+                                + "guardaron correctamente."
+                );
+            }
+
+            establecerModoRegistro();
 
             limpiar();
 
@@ -947,6 +1138,35 @@ public class ProductoController {
                             + "un formato válido."
             );
         }
+    }
+
+    private boolean codigoExisteParaOtroProducto(
+            String codigo
+    ) {
+
+        for (Producto producto : productos) {
+
+            if (producto.getCodigo() == null) {
+                continue;
+            }
+
+            if (!producto.getCodigo()
+                    .trim()
+                    .equalsIgnoreCase(codigo)) {
+
+                continue;
+            }
+
+            if (productoEnEdicion != null
+                    && producto == productoEnEdicion) {
+
+                continue;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     @FXML
@@ -985,6 +1205,11 @@ public class ProductoController {
         tblProductos
                 .getSelectionModel()
                 .clearSelection();
+
+        if (btnEditar != null) {
+
+            btnEditar.setDisable(true);
+        }
     }
 
     private void mostrarMensaje(

@@ -18,12 +18,7 @@
             fx:controller="ni.edu.uam.facturacion.controller.ProductoController"
             stylesheets="@../styles/app.css">
 
-    <!-- =====================================================
-         ENCABEZADO
-         ===================================================== -->
-
     <top>
-
         <HBox styleClass="header"
               alignment="CENTER_LEFT">
 
@@ -38,23 +33,12 @@
             </VBox>
 
         </HBox>
-
     </top>
-
-
-    <!-- =====================================================
-         CONTENIDO PRINCIPAL
-         ===================================================== -->
 
     <center>
 
         <HBox styleClass="content-area"
               spacing="18">
-
-
-            <!-- =================================================
-                 FORMULARIO
-                 ================================================= -->
 
             <VBox styleClass="card product-form"
                   prefWidth="330"
@@ -67,9 +51,6 @@
 
                 <Label text="Ingrese los datos correspondientes."
                        styleClass="card-subtitle"/>
-
-
-                <!-- CÓDIGO -->
 
                 <Label text="Código"
                        styleClass="label-form"/>
@@ -84,9 +65,6 @@
 
                 </TextField>
 
-
-                <!-- NOMBRE -->
-
                 <Label text="Nombre"
                        styleClass="label-form"/>
 
@@ -99,9 +77,6 @@
                     </tooltip>
 
                 </TextField>
-
-
-                <!-- CATEGORÍA -->
 
                 <Label text="Categoría"
                        styleClass="label-form"/>
@@ -116,9 +91,6 @@
                     </tooltip>
 
                 </ComboBox>
-
-
-                <!-- PRECIO Y EXISTENCIA -->
 
                 <HBox spacing="10">
 
@@ -140,7 +112,6 @@
 
                     </VBox>
 
-
                     <VBox spacing="5"
                           HBox.hgrow="ALWAYS">
 
@@ -161,9 +132,6 @@
 
                 </HBox>
 
-
-                <!-- ESTADO -->
-
                 <CheckBox fx:id="chkActivo"
                           text="Producto activo">
 
@@ -172,11 +140,6 @@
                     </tooltip>
 
                 </CheckBox>
-
-
-                <!-- =================================================
-                     VISTA PREVIA
-                     ================================================= -->
 
                 <VBox styleClass="image-container"
                       alignment="CENTER"
@@ -195,9 +158,6 @@
 
                 </VBox>
 
-
-                <!-- IMAGEN -->
-
                 <Button fx:id="btnImagen"
                         text="Seleccionar imagen"
                         styleClass="button-secondary"
@@ -211,11 +171,6 @@
 
                 </Button>
 
-
-                <!-- =================================================
-                     ACCIONES
-                     ================================================= -->
-
                 <HBox spacing="8">
 
                     <Button fx:id="btnGuardar"
@@ -227,11 +182,24 @@
                             HBox.hgrow="ALWAYS">
 
                         <tooltip>
-                            <Tooltip text="Guardar producto&#10;Registra el producto con los datos ingresados."/>
+                            <Tooltip text="Guardar producto&#10;Registra o actualiza el producto."/>
                         </tooltip>
 
                     </Button>
 
+                    <Button fx:id="btnCancelarEdicion"
+                            text="Cancelar"
+                            styleClass="button-secondary"
+                            onAction="#cancelarEdicion"
+                            prefHeight="34"
+                            visible="false"
+                            managed="false">
+
+                        <tooltip>
+                            <Tooltip text="Cancelar edición&#10;Cancela los cambios y vuelve al modo de registro."/>
+                        </tooltip>
+
+                    </Button>
 
                     <Button fx:id="btnCerrar"
                             text="Cerrar"
@@ -249,11 +217,6 @@
 
             </VBox>
 
-
-            <!-- =================================================
-                 TABLA
-                 ================================================= -->
-
             <VBox styleClass="card"
                   spacing="10"
                   HBox.hgrow="ALWAYS">
@@ -263,9 +226,6 @@
 
                 <Label text="Busque productos por código, nombre o categoría."
                        styleClass="card-subtitle"/>
-
-
-                <!-- BÚSQUEDA -->
 
                 <HBox spacing="8"
                       alignment="CENTER_LEFT">
@@ -281,7 +241,6 @@
 
                     </TextField>
 
-
                     <Button fx:id="btnLimpiarBusqueda"
                             text="Limpiar"
                             styleClass="button-secondary"
@@ -294,10 +253,20 @@
 
                     </Button>
 
+                    <Button fx:id="btnEditar"
+                            text="Editar producto"
+                            styleClass="button-primary"
+                            prefHeight="34"
+                            onAction="#editarProducto"
+                            disable="true">
+
+                        <tooltip>
+                            <Tooltip text="Editar producto&#10;Carga el producto seleccionado para modificarlo."/>
+                        </tooltip>
+
+                    </Button>
+
                 </HBox>
-
-
-                <!-- TABLA -->
 
                 <TableView fx:id="tblProductos"
                            VBox.vgrow="ALWAYS"
@@ -333,7 +302,6 @@
 
                 </TableView>
 
-
                 <Label fx:id="lblContador"
                        text="Mostrando 0 productos"
                        styleClass="status-label"/>
@@ -343,11 +311,6 @@
         </HBox>
 
     </center>
-
-
-    <!-- =====================================================
-         PIE
-         ===================================================== -->
 
     <bottom>
 
