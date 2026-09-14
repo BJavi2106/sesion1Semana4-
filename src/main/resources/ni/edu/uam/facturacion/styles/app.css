@@ -4,11 +4,6 @@
    EL GÜEGÜENSE
    ========================================================= */
 
-
-/* =========================================================
-   CONFIGURACIÓN GENERAL
-   ========================================================= */
-
 .root {
     -fx-font-family: "Segoe UI", Arial, sans-serif;
     -fx-background-color: #f4f6f8;
@@ -220,6 +215,37 @@
 
 
 /* =========================================================
+   VALIDACIÓN VISUAL
+   ========================================================= */
+
+.field-error {
+    -fx-border-color: #dc2626 !important;
+    -fx-border-width: 1.5px !important;
+    -fx-effect: dropshadow(
+            gaussian,
+            rgba(220, 38, 38, 0.18),
+            6,
+            0.12,
+            0,
+            1
+    );
+}
+
+.field-error:focused {
+    -fx-border-color: #b91c1c !important;
+    -fx-border-width: 2px !important;
+    -fx-effect: dropshadow(
+            gaussian,
+            rgba(220, 38, 38, 0.25),
+            7,
+            0.15,
+            0,
+            1
+    );
+}
+
+
+/* =========================================================
    COMBOBOX
    ========================================================= */
 
@@ -270,9 +296,6 @@
     -fx-cursor: hand;
 }
 
-
-/* PRINCIPAL */
-
 .button-primary {
     -fx-background-color: #2563eb;
     -fx-text-fill: white;
@@ -285,9 +308,6 @@
 .button-primary:pressed {
     -fx-background-color: #1e40af;
 }
-
-
-/* SECUNDARIO */
 
 .button-secondary {
     -fx-background-color: #e9edf2;
@@ -302,9 +322,6 @@
     -fx-background-color: #cbd3dc;
 }
 
-
-/* ÉXITO */
-
 .button-success {
     -fx-background-color: #16a34a;
     -fx-text-fill: white;
@@ -317,9 +334,6 @@
 .button-success:pressed {
     -fx-background-color: #166534;
 }
-
-
-/* PELIGRO */
 
 .button-danger {
     -fx-background-color: #dc2626;
@@ -430,19 +444,14 @@
 .tooltip {
     -fx-background-color: #172033;
     -fx-text-fill: #f8fafc;
-
     -fx-background-radius: 7px;
-
     -fx-border-color: #475569;
     -fx-border-width: 1px;
     -fx-border-radius: 7px;
-
     -fx-padding: 9px 13px;
-
     -fx-font-family: "Segoe UI", Arial, sans-serif;
     -fx-font-size: 12px;
     -fx-font-weight: normal;
-
     -fx-effect: dropshadow(
             gaussian,
             rgba(0, 0, 0, 0.30),

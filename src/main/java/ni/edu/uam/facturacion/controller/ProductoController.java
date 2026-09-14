@@ -113,6 +113,8 @@ public class ProductoController {
 
         configurarTooltips();
 
+        configurarValidacionVisual();
+
         chkActivo.setSelected(true);
 
         actualizarContador();
@@ -159,17 +161,11 @@ public class ProductoController {
                 new javafx.scene.control.cell.PropertyValueFactory<>("activo")
         );
 
-
         colCodigo.setStyle("-fx-alignment: CENTER-LEFT;");
-
         colNombre.setStyle("-fx-alignment: CENTER-LEFT;");
-
         colCategoria.setStyle("-fx-alignment: CENTER-LEFT;");
-
         colPrecio.setStyle("-fx-alignment: CENTER-RIGHT;");
-
         colExistencia.setStyle("-fx-alignment: CENTER;");
-
         colActivo.setStyle("-fx-alignment: CENTER;");
 
 
@@ -185,14 +181,9 @@ public class ProductoController {
                         super.updateItem(precio, empty);
 
                         if (empty || precio == null) {
-
                             setText(null);
-
                         } else {
-
-                            setText(
-                                    formatoMoneda.format(precio)
-                            );
+                            setText(formatoMoneda.format(precio));
                         }
                     }
                 }
@@ -241,8 +232,7 @@ public class ProductoController {
         tblProductos.widthProperty().addListener(
                 (observable, anterior, nuevo) -> {
 
-                    double ancho =
-                            nuevo.doubleValue();
+                    double ancho = nuevo.doubleValue();
 
                     if (ancho > 0) {
 
@@ -274,9 +264,7 @@ public class ProductoController {
                         ? ""
                         : texto.trim().toLowerCase();
 
-
         productosFiltrados.clear();
-
 
         if (busqueda.isBlank()) {
 
@@ -302,7 +290,6 @@ public class ProductoController {
                                 : producto.getCategoria()
                                 .getNombre()
                                 .toLowerCase();
-
 
                 if (codigo.contains(busqueda)
                         || nombre.contains(busqueda)
@@ -334,8 +321,7 @@ public class ProductoController {
 
         if (lblContador != null) {
 
-            int cantidad =
-                    productosFiltrados.size();
+            int cantidad = productosFiltrados.size();
 
             lblContador.setText(
                     "Mostrando "
@@ -345,6 +331,150 @@ public class ProductoController {
                             : " productos")
             );
         }
+    }
+
+
+    private void configurarValidacionVisual() {
+
+        txtCodigo.textProperty().addListener(
+                (observable, anterior, nuevo) ->
+                        validarTexto(txtCodigo)
+        );
+
+        txtNombre.textProperty().addListener(
+                (observable, anterior, nuevo) ->
+                        validarTexto(txtNombre)
+        );
+
+        txtPrecio.textProperty().addListener(
+                (observable, anterior, nuevo) ->
+                        validarPrecio()
+        );
+
+        txtExistencia.textProperty().addListener(
+                (observable, anterior, nuevo) ->
+                        validarExistencia()
+        );
+
+        cmbCategoria.valueProperty().addListener(
+                (observable, anterior, nuevo) ->
+                        validarCategoria()
+        );
+    }
+
+
+    private void validarTexto(TextField campo) {
+
+        if (campo.getText().trim().isEmpty()) {
+
+            marcarError(campo);
+
+        } else {
+
+            limpiarError(campo);
+        }
+    }
+
+
+    private void validarCategoria() {
+
+        if (cmbCategoria.getValue() == null) {
+
+            marcarError(cmbCategoria);
+
+        } else {
+
+            limpiarError(cmbCategoria);
+        }
+    }
+
+
+    private void validarPrecio() {
+
+        String texto =
+                txtPrecio.getText().trim();
+
+        if (texto.isEmpty()) {
+
+            marcarError(txtPrecio);
+            return;
+        }
+
+        try {
+
+            BigDecimal precio =
+                    new BigDecimal(texto);
+
+            if (precio.signum() <= 0) {
+
+                marcarError(txtPrecio);
+
+            } else {
+
+                limpiarError(txtPrecio);
+            }
+
+        } catch (NumberFormatException e) {
+
+            marcarError(txtPrecio);
+        }
+    }
+
+
+    private void validarExistencia() {
+
+        String texto =
+                txtExistencia.getText().trim();
+
+        if (texto.isEmpty()) {
+
+            marcarError(txtExistencia);
+            return;
+        }
+
+        try {
+
+            int existencia =
+                    Integer.parseInt(texto);
+
+            if (existencia < 0) {
+
+                marcarError(txtExistencia);
+
+            } else {
+
+                limpiarError(txtExistencia);
+            }
+
+        } catch (NumberFormatException e) {
+
+            marcarError(txtExistencia);
+        }
+    }
+
+
+    private void marcarError(Control control) {
+
+        if (!control.getStyleClass().contains("field-error")) {
+
+            control.getStyleClass().add("field-error");
+        }
+    }
+
+
+    private void limpiarError(Control control) {
+
+        control.getStyleClass().remove("field-error");
+    }
+
+
+    private void limpiarValidaciones() {
+
+        limpiarError(txtCodigo);
+        limpiarError(txtNombre);
+        limpiarError(txtPrecio);
+        limpiarError(txtExistencia);
+        limpiarError(cmbCategoria);
     }
 
 
@@ -472,7 +602,6 @@ public class ProductoController {
                                 .getWindow()
                 );
 
-
         if (archivo != null) {
 
             rutaImagen =
@@ -488,11 +617,20 @@ public class ProductoController {
     @FXML
     private void guardar() {
 
-        if (txtCodigo.getText().isBlank()
-                || txtNombre.getText().isBlank()
-                || txtPrecio.getText().isBlank()
-                || txtExistencia.getText().isBlank()
-                || cmbCategoria.getValue() == null) {
+        boolean datosCompletos =
+                !txtCodigo.getText().isBlank()
+                        && !txtNombre.getText().isBlank()
+                        && !txtPrecio.getText().isBlank()
+                        && !txtExistencia.getText().isBlank()
+                        && cmbCategoria.getValue() != null;
+
+        if (!datosCompletos) {
+
+            validarTexto(txtCodigo);
+            validarTexto(txtNombre);
+            validarPrecio();
+            validarExistencia();
+            validarCategoria();
 
             mostrarMensaje(
                     Alert.AlertType.WARNING,
@@ -508,21 +646,20 @@ public class ProductoController {
 
             BigDecimal precio =
                     new BigDecimal(
-                            txtPrecio
-                                    .getText()
-                                    .trim()
+                            txtPrecio.getText().trim()
                     );
 
             int existencia =
                     Integer.parseInt(
-                            txtExistencia
-                                    .getText()
-                                    .trim()
+                            txtExistencia.getText().trim()
                     );
 
 
             if (precio.signum() <= 0
                     || existencia < 0) {
+
+                validarPrecio();
+                validarExistencia();
 
                 mostrarMensaje(
                         Alert.AlertType.WARNING,
@@ -538,25 +675,13 @@ public class ProductoController {
             Producto producto =
                     new Producto(
                             null,
-                            txtCodigo
-                                    .getText()
-                                    .trim(),
-
-                            txtNombre
-                                    .getText()
-                                    .trim(),
-
-                            cmbCategoria
-                                    .getValue(),
-
+                            txtCodigo.getText().trim(),
+                            txtNombre.getText().trim(),
+                            cmbCategoria.getValue(),
                             precio,
-
                             existencia,
-
                             rutaImagen,
-
-                            chkActivo
-                                    .isSelected()
+                            chkActivo.isSelected()
                     );
 
 
@@ -578,6 +703,9 @@ public class ProductoController {
             limpiar();
 
         } catch (NumberFormatException e) {
+
+            validarPrecio();
+            validarExistencia();
 
             mostrarMensaje(
                     Alert.AlertType.ERROR,
@@ -620,6 +748,8 @@ public class ProductoController {
         imgProducto.setImage(null);
 
         rutaImagen = null;
+
+        limpiarValidaciones();
     }
 
 
