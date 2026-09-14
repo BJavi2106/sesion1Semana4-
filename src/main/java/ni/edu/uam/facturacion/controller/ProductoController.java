@@ -142,20 +142,18 @@ public class ProductoController {
         );
 
 
-        // Código
         colCodigo.setStyle("-fx-alignment: CENTER-LEFT;");
 
-
-        // Nombre
         colNombre.setStyle("-fx-alignment: CENTER-LEFT;");
 
-
-        // Categoría
         colCategoria.setStyle("-fx-alignment: CENTER-LEFT;");
 
-
-        // Precio
         colPrecio.setStyle("-fx-alignment: CENTER-RIGHT;");
+
+        colExistencia.setStyle("-fx-alignment: CENTER;");
+
+        colActivo.setStyle("-fx-alignment: CENTER;");
+
 
         colPrecio.setCellFactory(column ->
                 new TableCell<>() {
@@ -183,13 +181,6 @@ public class ProductoController {
         );
 
 
-        // Existencia
-        colExistencia.setStyle("-fx-alignment: CENTER;");
-
-
-        // Estado
-        colActivo.setStyle("-fx-alignment: CENTER;");
-
         colActivo.setCellFactory(column ->
                 new TableCell<>() {
 
@@ -204,7 +195,6 @@ public class ProductoController {
                         if (empty || activo == null) {
 
                             setText(null);
-
                             setStyle("");
 
                         } else if (activo) {
@@ -230,7 +220,6 @@ public class ProductoController {
         );
 
 
-        // Ajuste automático de columnas
         tblProductos.widthProperty().addListener(
                 (observable, anterior, nuevo) -> {
 
@@ -282,14 +271,12 @@ public class ProductoController {
                 String codigo =
                         producto.getCodigo() == null
                                 ? ""
-                                : producto.getCodigo()
-                                .toLowerCase();
+                                : producto.getCodigo().toLowerCase();
 
                 String nombre =
                         producto.getNombre() == null
                                 ? ""
-                                : producto.getNombre()
-                                .toLowerCase();
+                                : producto.getNombre().toLowerCase();
 
                 String categoria =
                         producto.getCategoria() == null
@@ -391,8 +378,9 @@ public class ProductoController {
                 || txtExistencia.getText().isBlank()
                 || cmbCategoria.getValue() == null) {
 
-            mensaje(
+            mostrarMensaje(
                     Alert.AlertType.WARNING,
+                    "Datos incompletos",
                     "Complete los campos obligatorios."
             );
 
@@ -420,9 +408,11 @@ public class ProductoController {
             if (precio.signum() <= 0
                     || existencia < 0) {
 
-                mensaje(
+                mostrarMensaje(
                         Alert.AlertType.WARNING,
-                        "Precio mayor que cero y existencia no negativa."
+                        "Datos no válidos",
+                        "El precio debe ser mayor que cero "
+                                + "y la existencia no puede ser negativa."
                 );
 
                 return;
@@ -461,9 +451,11 @@ public class ProductoController {
             );
 
 
-            mensaje(
+            mostrarMensaje(
                     Alert.AlertType.INFORMATION,
-                    "Producto agregado correctamente."
+                    "Producto registrado",
+                    "El producto se agregó correctamente "
+                            + "al catálogo."
             );
 
 
@@ -471,9 +463,11 @@ public class ProductoController {
 
         } catch (NumberFormatException e) {
 
-            mensaje(
+            mostrarMensaje(
                     Alert.AlertType.ERROR,
-                    "Precio o existencia no válidos."
+                    "Datos no válidos",
+                    "El precio o la existencia no tienen "
+                            + "un formato válido."
             );
         }
     }
@@ -513,15 +507,65 @@ public class ProductoController {
     }
 
 
-    private void mensaje(
+    private void mostrarMensaje(
             Alert.AlertType tipo,
+            String titulo,
             String texto
     ) {
 
-        new Alert(
-                tipo,
-                texto,
-                ButtonType.OK
-        ).showAndWait();
+        Alert alerta =
+                new Alert(
+                        tipo,
+                        texto,
+                        ButtonType.OK
+                );
+
+        alerta.setTitle("Sistema de Facturación");
+        alerta.setHeaderText(titulo);
+
+        alerta.getDialogPane()
+                .getStyleClass()
+                .add("app-alert");
+
+
+        switch (tipo) {
+
+            case INFORMATION ->
+                    alerta.getDialogPane()
+                            .getStyleClass()
+                            .add("app-alert-information");
+
+            case WARNING ->
+                    alerta.getDialogPane()
+                            .getStyleClass()
+                            .add("app-alert-warning");
+
+            case ERROR ->
+                    alerta.getDialogPane()
+                            .getStyleClass()
+                            .add("app-alert-error");
+
+            default -> {
+            }
+        }
+
+
+        var hojaEstilos =
+                getClass()
+                        .getResource(
+                                "/ni/edu/uam/facturacion/styles/app.css"
+                        );
+
+        if (hojaEstilos != null) {
+
+            alerta.getDialogPane()
+                    .getStylesheets()
+                    .add(
+                            hojaEstilos.toExternalForm()
+                    );
+        }
+
+
+        alerta.showAndWait();
     }
 }
