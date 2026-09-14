@@ -5,47 +5,203 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="ni.edu.uam.facturacion.controller.MenuPrincipalController">
+            fx:controller="ni.edu.uam.facturacion.controller.MenuPrincipalController"
+            stylesheets="@../styles/app.css">
 
     <top>
+
         <VBox>
+
+            <!-- ENCABEZADO -->
+
+            <HBox styleClass="header"
+                  alignment="CENTER_LEFT"
+                  spacing="12">
+
+                <VBox spacing="2">
+
+                    <Label text="EL GÜEGÜENSE"
+                           styleClass="header-title"/>
+
+                    <Label text="Sistema de Facturación"
+                           styleClass="header-subtitle"/>
+
+                </VBox>
+
+            </HBox>
+
+
+            <!-- MENÚ PRINCIPAL -->
+
             <MenuBar>
-                <Menu text="Archivo">
+
+                <Menu text="Sistema">
 
                     <MenuItem fx:id="mnuProductos"
-                              text="Productos"
+                              text="Gestión de productos"
                               onAction="#abrirProductos"/>
+
+                    <SeparatorMenuItem/>
 
                     <MenuItem fx:id="mnuSalir"
                               text="Salir"
                               onAction="#salir"/>
 
                 </Menu>
+
+
+                <Menu text="Ayuda">
+
+                    <MenuItem text="Acerca del sistema"/>
+
+                </Menu>
+
             </MenuBar>
 
+
+            <!-- BARRA DE HERRAMIENTAS -->
+
             <ToolBar>
+
                 <Button fx:id="btnProductos"
                         text="Productos"
-                        onAction="#abrirProductos"/>
+                        styleClass="button-primary"
+                        onAction="#abrirProductos">
+
+                    <tooltip>
+
+                        <Tooltip text="Gestión de productos&#10;Permite registrar y consultar productos."/>
+
+                    </tooltip>
+
+                </Button>
+
 
                 <Button fx:id="btnSalir"
                         text="Salir"
-                        onAction="#salir"/>
+                        styleClass="button-danger"
+                        onAction="#salir">
+
+                    <tooltip>
+
+                        <Tooltip text="Salir del sistema&#10;Cierra la aplicación."/>
+
+                    </tooltip>
+
+                </Button>
+
             </ToolBar>
+
         </VBox>
+
     </top>
 
+
+    <!-- CONTENIDO CENTRAL -->
+
     <center>
-        <HBox alignment="CENTER">
-            <Label text="Sistema de facturación"/>
-        </HBox>
+
+        <VBox styleClass="content-area"
+              alignment="TOP_LEFT"
+              spacing="22">
+
+            <Label text="Panel principal"
+                   styleClass="page-title"/>
+
+            <Label text="Seleccione una opción para comenzar a trabajar."
+                   styleClass="page-description"/>
+
+
+            <HBox spacing="18">
+
+
+                <!-- TARJETA PRODUCTOS -->
+
+                <VBox styleClass="card"
+                      prefWidth="260"
+                      spacing="10">
+
+                    <Label text="Productos"
+                           styleClass="card-title"/>
+
+                    <Label text="Administre el catálogo de productos, precios, existencia e imágenes."
+                           styleClass="card-subtitle"
+                           wrapText="true"/>
+
+                    <Button text="Abrir productos"
+                            styleClass="button-primary"
+                            onAction="#abrirProductos">
+
+                        <tooltip>
+
+                            <Tooltip text="Abrir gestión de productos"/>
+
+                        </tooltip>
+
+                    </Button>
+
+                </VBox>
+
+
+                <!-- TARJETA SISTEMA -->
+
+                <VBox styleClass="card"
+                      prefWidth="260"
+                      spacing="10">
+
+                    <Label text="Sistema"
+                           styleClass="card-title"/>
+
+                    <Label text="Herramientas principales del sistema de facturación."
+                           styleClass="card-subtitle"
+                           wrapText="true"/>
+
+                </VBox>
+
+
+                <!-- TARJETA INFORMACIÓN -->
+
+                <VBox styleClass="card"
+                      prefWidth="260"
+                      spacing="10">
+
+                    <Label text="Información"
+                           styleClass="card-title"/>
+
+                    <Label text="Sistema desarrollado para la gestión y control de productos."
+                           styleClass="card-subtitle"
+                           wrapText="true"/>
+
+                </VBox>
+
+            </HBox>
+
+        </VBox>
+
     </center>
+
+
+    <!-- BARRA INFERIOR -->
+
+    <bottom>
+
+        <HBox styleClass="status-bar"
+              alignment="CENTER_LEFT">
+
+            <Label text="Sistema de Facturación • UAM"
+                   styleClass="status-label"/>
+
+        </HBox>
+
+    </bottom>
 
 </BorderPane>
