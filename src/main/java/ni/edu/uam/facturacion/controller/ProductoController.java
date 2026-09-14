@@ -4,18 +4,22 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import ni.edu.uam.facturacion.mode1.Categoria;
 import ni.edu.uam.facturacion.mode1.Producto;
 
@@ -49,6 +53,18 @@ public class ProductoController {
 
     @FXML
     private ImageView imgProducto;
+
+    @FXML
+    private Button btnImagen;
+
+    @FXML
+    private Button btnGuardar;
+
+    @FXML
+    private Button btnCerrar;
+
+    @FXML
+    private Button btnLimpiarBusqueda;
 
     @FXML
     private TableView<Producto> tblProductos;
@@ -94,6 +110,8 @@ public class ProductoController {
         configurarTabla();
 
         configurarBusqueda();
+
+        configurarTooltips();
 
         chkActivo.setSelected(true);
 
@@ -330,6 +348,104 @@ public class ProductoController {
     }
 
 
+    private void configurarTooltips() {
+
+        configurarTooltip(
+                txtCodigo,
+                "Código del producto\n"
+                        + "Identificador del producto dentro del sistema."
+        );
+
+        configurarTooltip(
+                txtNombre,
+                "Nombre del producto\n"
+                        + "Ingrese el nombre que tendrá el producto."
+        );
+
+        configurarTooltip(
+                cmbCategoria,
+                "Categoría\n"
+                        + "Seleccione la categoría a la que pertenece el producto."
+        );
+
+        configurarTooltip(
+                txtPrecio,
+                "Precio de venta\n"
+                        + "Ingrese un precio mayor que cero."
+        );
+
+        configurarTooltip(
+                txtExistencia,
+                "Existencia\n"
+                        + "Cantidad disponible del producto."
+        );
+
+        configurarTooltip(
+                chkActivo,
+                "Estado del producto\n"
+                        + "Indica si el producto se encuentra activo."
+        );
+
+        configurarTooltip(
+                btnImagen,
+                "Seleccionar imagen\n"
+                        + "Permite elegir una imagen para el producto."
+        );
+
+        configurarTooltip(
+                btnGuardar,
+                "Guardar producto\n"
+                        + "Registra el producto con los datos ingresados."
+        );
+
+        configurarTooltip(
+                btnCerrar,
+                "Cerrar ventana\n"
+                        + "Cierra la gestión de productos."
+        );
+
+        configurarTooltip(
+                txtBuscar,
+                "Buscar productos\n"
+                        + "Filtra el listado por código, nombre o categoría."
+        );
+
+        configurarTooltip(
+                btnLimpiarBusqueda,
+                "Limpiar búsqueda\n"
+                        + "Muestra nuevamente todos los productos."
+        );
+    }
+
+
+    private void configurarTooltip(
+            Control control,
+            String texto
+    ) {
+
+        Tooltip tooltip =
+                new Tooltip(texto);
+
+        tooltip.setShowDelay(
+                Duration.millis(350)
+        );
+
+        tooltip.setShowDuration(
+                Duration.seconds(8)
+        );
+
+        tooltip.setHideDelay(
+                Duration.millis(150)
+        );
+
+        tooltip.setWrapText(true);
+
+        tooltip.setMaxWidth(300);
+
+        control.setTooltip(tooltip);
+    }
+
+
     @FXML
     private void seleccionarImagen() {
 
@@ -520,7 +636,10 @@ public class ProductoController {
                         ButtonType.OK
                 );
 
-        alerta.setTitle("Sistema de Facturación");
+        alerta.setTitle(
+                "Sistema de Facturación"
+        );
+
         alerta.setHeaderText(titulo);
 
         alerta.getDialogPane()

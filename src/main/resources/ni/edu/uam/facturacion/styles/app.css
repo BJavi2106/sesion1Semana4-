@@ -84,7 +84,7 @@
 
 
 /* =========================================================
-   ÁREA DEL DASHBOARD
+   DASHBOARD
    ========================================================= */
 
 .dashboard {
@@ -105,7 +105,7 @@
 
 
 /* =========================================================
-   TARJETAS DEL DASHBOARD
+   TARJETAS
    ========================================================= */
 
 .dashboard-card {
@@ -119,7 +119,14 @@
 
 .dashboard-card:hover {
     -fx-border-color: #2563eb;
-    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.12), 12, 0.15, 0, 4);
+    -fx-effect: dropshadow(
+            gaussian,
+            rgba(15, 23, 42, 0.12),
+            12,
+            0.15,
+            0,
+            4
+    );
 }
 
 .dashboard-card-title {
@@ -161,7 +168,7 @@
 
 
 /* =========================================================
-   FORMULARIO
+   ÁREA DE CONTENIDO
    ========================================================= */
 
 .content-area {
@@ -181,7 +188,7 @@
 
 
 /* =========================================================
-   CAMPOS DE TEXTO
+   CAMPOS
    ========================================================= */
 
 .text-field {
@@ -201,7 +208,14 @@
 .text-field:focused {
     -fx-border-color: #2563eb;
     -fx-border-width: 1.5px;
-    -fx-effect: dropshadow(gaussian, rgba(37, 99, 235, 0.12), 6, 0.1, 0, 1);
+    -fx-effect: dropshadow(
+            gaussian,
+            rgba(37, 99, 235, 0.12),
+            6,
+            0.1,
+            0,
+            1
+    );
 }
 
 
@@ -244,7 +258,7 @@
 
 
 /* =========================================================
-   BOTÓN BASE
+   BOTONES
    ========================================================= */
 
 .button {
@@ -257,9 +271,7 @@
 }
 
 
-/* =========================================================
-   BOTÓN PRINCIPAL
-   ========================================================= */
+/* PRINCIPAL */
 
 .button-primary {
     -fx-background-color: #2563eb;
@@ -275,9 +287,7 @@
 }
 
 
-/* =========================================================
-   BOTÓN SECUNDARIO
-   ========================================================= */
+/* SECUNDARIO */
 
 .button-secondary {
     -fx-background-color: #e9edf2;
@@ -293,9 +303,7 @@
 }
 
 
-/* =========================================================
-   BOTÓN GUARDAR
-   ========================================================= */
+/* ÉXITO */
 
 .button-success {
     -fx-background-color: #16a34a;
@@ -311,9 +319,7 @@
 }
 
 
-/* =========================================================
-   BOTÓN CERRAR / SALIR
-   ========================================================= */
+/* PELIGRO */
 
 .button-danger {
     -fx-background-color: #dc2626;
@@ -330,7 +336,7 @@
 
 
 /* =========================================================
-   IMAGEN DEL PRODUCTO
+   IMAGEN
    ========================================================= */
 
 .image-container {
@@ -401,7 +407,7 @@
 
 
 /* =========================================================
-   ETIQUETA DE ESTADO / CONTADOR
+   BARRA DE ESTADO
    ========================================================= */
 
 .status-label {
@@ -423,18 +429,33 @@
 
 .tooltip {
     -fx-background-color: #172033;
-    -fx-text-fill: #ffffff;
-    -fx-background-radius: 6px;
-    -fx-border-color: #334155;
-    -fx-border-radius: 6px;
-    -fx-padding: 9px 12px;
+    -fx-text-fill: #f8fafc;
+
+    -fx-background-radius: 7px;
+
+    -fx-border-color: #475569;
+    -fx-border-width: 1px;
+    -fx-border-radius: 7px;
+
+    -fx-padding: 9px 13px;
+
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
     -fx-font-size: 12px;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 8, 0.15, 0, 3);
+    -fx-font-weight: normal;
+
+    -fx-effect: dropshadow(
+            gaussian,
+            rgba(0, 0, 0, 0.30),
+            10,
+            0.18,
+            0,
+            4
+    );
 }
 
 
 /* =========================================================
-   ALERTAS DEL SISTEMA
+   ALERTAS
    ========================================================= */
 
 .app-alert {
