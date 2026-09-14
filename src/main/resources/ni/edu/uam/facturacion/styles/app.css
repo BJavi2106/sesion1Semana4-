@@ -1,0 +1,290 @@
+/* =========================================================
+   SISTEMA DE FACTURACIÓN
+   Diseño visual principal
+   ========================================================= */
+
+.root {
+    -fx-font-family: "Segoe UI";
+    -fx-background-color: #f4f6f9;
+    -fx-text-fill: #263238;
+}
+
+
+/* =========================================================
+   ENCABEZADO
+   ========================================================= */
+
+.header {
+    -fx-background-color: #1f2937;
+    -fx-padding: 18px 24px;
+}
+
+.header-title {
+    -fx-text-fill: white;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+.header-subtitle {
+    -fx-text-fill: #cbd5e1;
+    -fx-font-size: 12px;
+}
+
+
+/* =========================================================
+   MENÚ
+   ========================================================= */
+
+.menu-bar {
+    -fx-background-color: #111827;
+    -fx-padding: 2px 10px;
+}
+
+.menu-bar .label {
+    -fx-text-fill: white;
+}
+
+.menu-bar .menu:hover {
+    -fx-background-color: #374151;
+}
+
+.context-menu {
+    -fx-background-color: white;
+    -fx-border-color: #d1d5db;
+}
+
+
+/* =========================================================
+   ÁREA PRINCIPAL
+   ========================================================= */
+
+.content-area {
+    -fx-padding: 28px;
+}
+
+.page-title {
+    -fx-text-fill: #1f2937;
+    -fx-font-size: 25px;
+    -fx-font-weight: bold;
+}
+
+.page-description {
+    -fx-text-fill: #6b7280;
+    -fx-font-size: 13px;
+}
+
+
+/* =========================================================
+   TARJETAS
+   ========================================================= */
+
+.card {
+    -fx-background-color: white;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-border-color: #e5e7eb;
+    -fx-border-width: 1px;
+    -fx-padding: 20px;
+}
+
+.card-title {
+    -fx-text-fill: #1f2937;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.card-subtitle {
+    -fx-text-fill: #6b7280;
+    -fx-font-size: 12px;
+}
+
+
+/* =========================================================
+   CAMPOS
+   ========================================================= */
+
+.text-field,
+.combo-box {
+    -fx-background-color: white;
+    -fx-border-color: #d1d5db;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-padding: 8px 10px;
+    -fx-font-size: 13px;
+}
+
+.text-field:focused,
+.combo-box:focused {
+    -fx-border-color: #2563eb;
+    -fx-border-width: 1.5px;
+}
+
+.label-form {
+    -fx-text-fill: #374151;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+
+/* =========================================================
+   CHECKBOX
+   ========================================================= */
+
+.check-box {
+    -fx-text-fill: #374151;
+    -fx-font-size: 13px;
+}
+
+
+/* =========================================================
+   BOTONES
+   ========================================================= */
+
+.button {
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
+    -fx-padding: 9px 16px;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.button-primary {
+    -fx-background-color: #2563eb;
+    -fx-text-fill: white;
+}
+
+.button-primary:hover {
+    -fx-background-color: #1d4ed8;
+}
+
+.button-primary:pressed {
+    -fx-background-color: #1e40af;
+}
+
+.button-secondary {
+    -fx-background-color: #e5e7eb;
+    -fx-text-fill: #374151;
+}
+
+.button-secondary:hover {
+    -fx-background-color: #d1d5db;
+}
+
+.button-danger {
+    -fx-background-color: #dc2626;
+    -fx-text-fill: white;
+}
+
+.button-danger:hover {
+    -fx-background-color: #b91c1c;
+}
+
+.button-success {
+    -fx-background-color: #16a34a;
+    -fx-text-fill: white;
+}
+
+.button-success:hover {
+    -fx-background-color: #15803d;
+}
+
+
+/* =========================================================
+   TOOLBAR
+   ========================================================= */
+
+.tool-bar {
+    -fx-background-color: white;
+    -fx-border-color: #e5e7eb;
+    -fx-border-width: 0 0 1px 0;
+    -fx-padding: 8px 14px;
+}
+
+
+/* =========================================================
+   TABLA
+   ========================================================= */
+
+.table-view {
+    -fx-background-color: white;
+    -fx-border-color: #d1d5db;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #f3f4f6;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: #e5e7eb;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #374151;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.table-row-cell {
+    -fx-background-color: white;
+    -fx-border-color: transparent transparent #f0f0f0 transparent;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: #eff6ff;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #dbeafe;
+    -fx-text-fill: #1e3a8a;
+}
+
+
+/* =========================================================
+   IMAGEN
+   ========================================================= */
+
+.image-container {
+    -fx-background-color: #f9fafb;
+    -fx-border-color: #d1d5db;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+}
+
+.image-placeholder {
+    -fx-text-fill: #9ca3af;
+    -fx-font-size: 12px;
+}
+
+
+/* =========================================================
+   BARRA INFERIOR
+   ========================================================= */
+
+.status-bar {
+    -fx-background-color: #f9fafb;
+    -fx-border-color: #e5e7eb;
+    -fx-border-width: 1px 0 0 0;
+    -fx-padding: 8px 16px;
+}
+
+.status-label {
+    -fx-text-fill: #6b7280;
+    -fx-font-size: 11px;
+}
+
+
+/* =========================================================
+   TOOLTIP
+   ========================================================= */
+
+.tooltip {
+    -fx-background-color: #1f2937;
+    -fx-text-fill: white;
+    -fx-background-radius: 5px;
+    -fx-padding: 8px 10px;
+    -fx-font-size: 12px;
+}
