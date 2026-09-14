@@ -288,3 +288,19 @@
     -fx-padding: 8px 10px;
     -fx-font-size: 12px;
 }
+/* =========================================================
+   FORMULARIO DE PRODUCTOS
+   ========================================================= */
+
+.product-form {
+    -fx-padding: 16px;
+}
+
+.product-form .text-field,
+.product-form .combo-box {
+    -fx-font-size: 12px;
+}
+
+.product-form .button {
+    -fx-font-size: 12px;
+}
