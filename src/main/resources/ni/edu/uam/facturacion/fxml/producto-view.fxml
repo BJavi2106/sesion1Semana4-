@@ -19,6 +19,7 @@
             stylesheets="@../styles/app.css">
 
     <top>
+
         <HBox styleClass="header"
               alignment="CENTER_LEFT">
 
@@ -33,6 +34,7 @@
             </VBox>
 
         </HBox>
+
     </top>
 
     <center>
@@ -262,6 +264,19 @@
 
                         <tooltip>
                             <Tooltip text="Editar producto&#10;Carga el producto seleccionado para modificarlo."/>
+                        </tooltip>
+
+                    </Button>
+
+                    <Button fx:id="btnEliminar"
+                            text="Eliminar producto"
+                            styleClass="button-danger"
+                            prefHeight="34"
+                            onAction="#eliminarProducto"
+                            disable="true">
+
+                        <tooltip>
+                            <Tooltip text="Eliminar producto&#10;Elimina el producto seleccionado del catálogo."/>
                         </tooltip>
 
                     </Button>

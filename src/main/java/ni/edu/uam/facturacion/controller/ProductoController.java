@@ -27,38 +27,78 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.Locale;
+import java.util.Optional;
 
 public class ProductoController {
 
-    @FXML private TextField txtCodigo;
-    @FXML private TextField txtNombre;
-    @FXML private TextField txtPrecio;
-    @FXML private TextField txtExistencia;
-    @FXML private TextField txtBuscar;
+    @FXML
+    private TextField txtCodigo;
 
-    @FXML private ComboBox<Categoria> cmbCategoria;
+    @FXML
+    private TextField txtNombre;
 
-    @FXML private CheckBox chkActivo;
+    @FXML
+    private TextField txtPrecio;
 
-    @FXML private ImageView imgProducto;
+    @FXML
+    private TextField txtExistencia;
 
-    @FXML private Button btnImagen;
-    @FXML private Button btnGuardar;
-    @FXML private Button btnCancelarEdicion;
-    @FXML private Button btnCerrar;
-    @FXML private Button btnLimpiarBusqueda;
-    @FXML private Button btnEditar;
+    @FXML
+    private TextField txtBuscar;
 
-    @FXML private TableView<Producto> tblProductos;
+    @FXML
+    private ComboBox<Categoria> cmbCategoria;
 
-    @FXML private TableColumn<Producto, String> colCodigo;
-    @FXML private TableColumn<Producto, String> colNombre;
-    @FXML private TableColumn<Producto, Categoria> colCategoria;
-    @FXML private TableColumn<Producto, BigDecimal> colPrecio;
-    @FXML private TableColumn<Producto, Integer> colExistencia;
-    @FXML private TableColumn<Producto, Boolean> colActivo;
+    @FXML
+    private CheckBox chkActivo;
 
-    @FXML private Label lblContador;
+    @FXML
+    private ImageView imgProducto;
+
+    @FXML
+    private Button btnImagen;
+
+    @FXML
+    private Button btnGuardar;
+
+    @FXML
+    private Button btnCancelarEdicion;
+
+    @FXML
+    private Button btnCerrar;
+
+    @FXML
+    private Button btnLimpiarBusqueda;
+
+    @FXML
+    private Button btnEditar;
+
+    @FXML
+    private Button btnEliminar;
+
+    @FXML
+    private TableView<Producto> tblProductos;
+
+    @FXML
+    private TableColumn<Producto, String> colCodigo;
+
+    @FXML
+    private TableColumn<Producto, String> colNombre;
+
+    @FXML
+    private TableColumn<Producto, Categoria> colCategoria;
+
+    @FXML
+    private TableColumn<Producto, BigDecimal> colPrecio;
+
+    @FXML
+    private TableColumn<Producto, Integer> colExistencia;
+
+    @FXML
+    private TableColumn<Producto, Boolean> colActivo;
+
+    @FXML
+    private Label lblContador;
 
     private final ObservableList<Producto> productos =
             FXCollections.observableArrayList();
@@ -115,35 +155,64 @@ public class ProductoController {
         tblProductos.setItems(productosFiltrados);
 
         colCodigo.setCellValueFactory(
-                new javafx.scene.control.cell.PropertyValueFactory<>("codigo")
+                new javafx.scene.control.cell.PropertyValueFactory<>(
+                        "codigo"
+                )
         );
 
         colNombre.setCellValueFactory(
-                new javafx.scene.control.cell.PropertyValueFactory<>("nombre")
+                new javafx.scene.control.cell.PropertyValueFactory<>(
+                        "nombre"
+                )
         );
 
         colCategoria.setCellValueFactory(
-                new javafx.scene.control.cell.PropertyValueFactory<>("categoria")
+                new javafx.scene.control.cell.PropertyValueFactory<>(
+                        "categoria"
+                )
         );
 
         colPrecio.setCellValueFactory(
-                new javafx.scene.control.cell.PropertyValueFactory<>("precioVenta")
+                new javafx.scene.control.cell.PropertyValueFactory<>(
+                        "precioVenta"
+                )
         );
 
         colExistencia.setCellValueFactory(
-                new javafx.scene.control.cell.PropertyValueFactory<>("existencia")
+                new javafx.scene.control.cell.PropertyValueFactory<>(
+                        "existencia"
+                )
         );
 
         colActivo.setCellValueFactory(
-                new javafx.scene.control.cell.PropertyValueFactory<>("activo")
+                new javafx.scene.control.cell.PropertyValueFactory<>(
+                        "activo"
+                )
         );
 
-        colCodigo.setStyle("-fx-alignment: CENTER-LEFT;");
-        colNombre.setStyle("-fx-alignment: CENTER-LEFT;");
-        colCategoria.setStyle("-fx-alignment: CENTER-LEFT;");
-        colPrecio.setStyle("-fx-alignment: CENTER-RIGHT;");
-        colExistencia.setStyle("-fx-alignment: CENTER;");
-        colActivo.setStyle("-fx-alignment: CENTER;");
+        colCodigo.setStyle(
+                "-fx-alignment: CENTER-LEFT;"
+        );
+
+        colNombre.setStyle(
+                "-fx-alignment: CENTER-LEFT;"
+        );
+
+        colCategoria.setStyle(
+                "-fx-alignment: CENTER-LEFT;"
+        );
+
+        colPrecio.setStyle(
+                "-fx-alignment: CENTER-RIGHT;"
+        );
+
+        colExistencia.setStyle(
+                "-fx-alignment: CENTER;"
+        );
+
+        colActivo.setStyle(
+                "-fx-alignment: CENTER;"
+        );
 
         colPrecio.setCellFactory(column ->
                 new TableCell<>() {
@@ -215,9 +284,13 @@ public class ProductoController {
 
                             if (seleccionado != null) {
 
-                                mostrarProductoSeleccionado(
-                                        seleccionado
-                                );
+                                btnEditar.setDisable(false);
+                                btnEliminar.setDisable(false);
+
+                            } else {
+
+                                btnEditar.setDisable(true);
+                                btnEliminar.setDisable(true);
                             }
                         }
                 );
@@ -225,7 +298,8 @@ public class ProductoController {
         tblProductos.widthProperty().addListener(
                 (observable, anterior, nuevo) -> {
 
-                    double ancho = nuevo.doubleValue();
+                    double ancho =
+                            nuevo.doubleValue();
 
                     if (ancho > 0) {
 
@@ -255,17 +329,6 @@ public class ProductoController {
                     }
                 }
         );
-    }
-
-    private void mostrarProductoSeleccionado(
-            Producto producto
-    ) {
-
-        if (producto == null) {
-            return;
-        }
-
-        btnEditar.setDisable(false);
     }
 
     private void configurarBusqueda() {
@@ -465,7 +528,9 @@ public class ProductoController {
                         return;
                     }
 
-                    if (!nuevo.matches("\\d*(\\.\\d*)?")) {
+                    if (!nuevo.matches(
+                            "\\d*(\\.\\d*)?"
+                    )) {
 
                         txtPrecio.setText(anterior);
 
@@ -552,19 +617,9 @@ public class ProductoController {
             return;
         }
 
-        if (codigoExiste(codigo)) {
+        if (codigoExisteParaOtroProducto(codigo)) {
 
-            limpiarError(txtCodigo);
-
-            if (productoEnEdicion == null
-                    || productoEnEdicion.getCodigo() == null
-                    || !productoEnEdicion
-                    .getCodigo()
-                    .trim()
-                    .equalsIgnoreCase(codigo)) {
-
-                marcarError(txtCodigo);
-            }
+            marcarError(txtCodigo);
 
         } else {
 
@@ -572,17 +627,30 @@ public class ProductoController {
         }
     }
 
-    private boolean codigoExiste(String codigo) {
+    private boolean codigoExisteParaOtroProducto(
+            String codigo
+    ) {
 
         for (Producto producto : productos) {
 
-            if (producto.getCodigo() != null
-                    && producto.getCodigo()
+            if (producto.getCodigo() == null) {
+                continue;
+            }
+
+            if (!producto.getCodigo()
                     .trim()
                     .equalsIgnoreCase(codigo)) {
 
-                return true;
+                continue;
             }
+
+            if (productoEnEdicion != null
+                    && producto == productoEnEdicion) {
+
+                continue;
+            }
+
+            return true;
         }
 
         return false;
@@ -764,6 +832,12 @@ public class ProductoController {
         );
 
         configurarTooltip(
+                btnEliminar,
+                "Eliminar producto\n"
+                        + "Elimina el producto seleccionado."
+        );
+
+        configurarTooltip(
                 btnCerrar,
                 "Cerrar ventana\n"
                         + "Cierra la gestión de productos."
@@ -866,7 +940,8 @@ public class ProductoController {
             return;
         }
 
-        productoEnEdicion = seleccionado;
+        productoEnEdicion =
+                seleccionado;
 
         txtCodigo.setText(
                 seleccionado.getCodigo()
@@ -922,6 +997,7 @@ public class ProductoController {
         );
 
         btnCancelarEdicion.setVisible(true);
+
         btnCancelarEdicion.setManaged(true);
 
         txtCodigo.requestFocus();
@@ -932,38 +1008,119 @@ public class ProductoController {
     @FXML
     private void cancelarEdicion() {
 
-        establecerModoRegistro();
+        productoEnEdicion = null;
+
+        btnGuardar.setText(
+                "Guardar producto"
+        );
+
+        btnCancelarEdicion.setVisible(false);
+
+        btnCancelarEdicion.setManaged(false);
 
         limpiar();
 
         txtCodigo.requestFocus();
     }
 
-    private void establecerModoRegistro() {
+    @FXML
+    private void eliminarProducto() {
 
-        productoEnEdicion = null;
+        Producto seleccionado =
+                tblProductos
+                        .getSelectionModel()
+                        .getSelectedItem();
 
-        if (btnGuardar != null) {
+        if (seleccionado == null) {
+
+            mostrarMensaje(
+                    Alert.AlertType.WARNING,
+                    "Producto no seleccionado",
+                    "Seleccione un producto de la tabla "
+                            + "para poder eliminarlo."
+            );
+
+            return;
+        }
+
+        Alert confirmacion =
+                new Alert(
+                        Alert.AlertType.CONFIRMATION,
+                        "¿Está seguro de que desea eliminar "
+                                + "este producto?\n\n"
+                                + "Código: "
+                                + seleccionado.getCodigo()
+                                + "\n"
+                                + "Nombre: "
+                                + seleccionado.getNombre()
+                                + "\n\n"
+                                + "Esta acción no se puede deshacer.",
+                        ButtonType.OK,
+                        ButtonType.CANCEL
+                );
+
+        confirmacion.setTitle(
+                "Sistema de Facturación"
+        );
+
+        confirmacion.setHeaderText(
+                "Confirmar eliminación"
+        );
+
+        confirmacion.getDialogPane()
+                .getStyleClass()
+                .add("app-alert");
+
+        confirmacion.getDialogPane()
+                .getStyleClass()
+                .add("app-alert-warning");
+
+        var hojaEstilos =
+                getClass().getResource(
+                        "/ni/edu/uam/facturacion/styles/app.css"
+                );
+
+        if (hojaEstilos != null) {
+
+            confirmacion.getDialogPane()
+                    .getStylesheets()
+                    .add(
+                            hojaEstilos.toExternalForm()
+                    );
+        }
+
+        Optional<ButtonType> resultado =
+                confirmacion.showAndWait();
+
+        if (resultado.isPresent()
+                && resultado.get() == ButtonType.OK) {
+
+            productos.remove(seleccionado);
+
+            filtrarProductos(
+                    txtBuscar.getText()
+            );
+
+            productoEnEdicion = null;
 
             btnGuardar.setText(
                     "Guardar producto"
             );
-        }
-
-        if (btnCancelarEdicion != null) {
 
             btnCancelarEdicion.setVisible(false);
+
             btnCancelarEdicion.setManaged(false);
-        }
 
-        if (btnEditar != null) {
+            limpiar();
 
-            btnEditar.setDisable(
-                    tblProductos == null
-                            || tblProductos
-                            .getSelectionModel()
-                            .getSelectedItem() == null
+            mostrarMensaje(
+                    Alert.AlertType.INFORMATION,
+                    "Producto eliminado",
+                    "El producto se eliminó correctamente "
+                            + "del catálogo."
             );
+
+            txtCodigo.requestFocus();
         }
     }
 
@@ -1081,9 +1238,13 @@ public class ProductoController {
 
             } else {
 
-                productoEnEdicion.setCodigo(codigo);
+                productoEnEdicion.setCodigo(
+                        codigo
+                );
 
-                productoEnEdicion.setNombre(nombre);
+                productoEnEdicion.setNombre(
+                        nombre
+                );
 
                 productoEnEdicion.setCategoria(
                         cmbCategoria.getValue()
@@ -1119,7 +1280,15 @@ public class ProductoController {
                 );
             }
 
-            establecerModoRegistro();
+            productoEnEdicion = null;
+
+            btnGuardar.setText(
+                    "Guardar producto"
+            );
+
+            btnCancelarEdicion.setVisible(false);
+
+            btnCancelarEdicion.setManaged(false);
 
             limpiar();
 
@@ -1140,35 +1309,6 @@ public class ProductoController {
         }
     }
 
-    private boolean codigoExisteParaOtroProducto(
-            String codigo
-    ) {
-
-        for (Producto producto : productos) {
-
-            if (producto.getCodigo() == null) {
-                continue;
-            }
-
-            if (!producto.getCodigo()
-                    .trim()
-                    .equalsIgnoreCase(codigo)) {
-
-                continue;
-            }
-
-            if (productoEnEdicion != null
-                    && producto == productoEnEdicion) {
-
-                continue;
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
     @FXML
     private void cerrar() {
 
@@ -1178,6 +1318,35 @@ public class ProductoController {
                         .getWindow();
 
         stage.close();
+    }
+
+    private void establecerModoRegistro() {
+
+        productoEnEdicion = null;
+
+        if (btnGuardar != null) {
+
+            btnGuardar.setText(
+                    "Guardar producto"
+            );
+        }
+
+        if (btnCancelarEdicion != null) {
+
+            btnCancelarEdicion.setVisible(false);
+
+            btnCancelarEdicion.setManaged(false);
+        }
+
+        if (btnEditar != null) {
+
+            btnEditar.setDisable(true);
+        }
+
+        if (btnEliminar != null) {
+
+            btnEliminar.setDisable(true);
+        }
     }
 
     private void limpiar() {
@@ -1209,6 +1378,11 @@ public class ProductoController {
         if (btnEditar != null) {
 
             btnEditar.setDisable(true);
+        }
+
+        if (btnEliminar != null) {
+
+            btnEliminar.setDisable(true);
         }
     }
 
