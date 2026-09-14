@@ -30,65 +30,33 @@ import java.util.Locale;
 
 public class ProductoController {
 
-    @FXML
-    private TextField txtCodigo;
+    @FXML private TextField txtCodigo;
+    @FXML private TextField txtNombre;
+    @FXML private TextField txtPrecio;
+    @FXML private TextField txtExistencia;
+    @FXML private TextField txtBuscar;
 
-    @FXML
-    private TextField txtNombre;
+    @FXML private ComboBox<Categoria> cmbCategoria;
 
-    @FXML
-    private TextField txtPrecio;
+    @FXML private CheckBox chkActivo;
 
-    @FXML
-    private TextField txtExistencia;
+    @FXML private ImageView imgProducto;
 
-    @FXML
-    private TextField txtBuscar;
+    @FXML private Button btnImagen;
+    @FXML private Button btnGuardar;
+    @FXML private Button btnCerrar;
+    @FXML private Button btnLimpiarBusqueda;
 
-    @FXML
-    private ComboBox<Categoria> cmbCategoria;
+    @FXML private TableView<Producto> tblProductos;
 
-    @FXML
-    private CheckBox chkActivo;
+    @FXML private TableColumn<Producto, String> colCodigo;
+    @FXML private TableColumn<Producto, String> colNombre;
+    @FXML private TableColumn<Producto, Categoria> colCategoria;
+    @FXML private TableColumn<Producto, BigDecimal> colPrecio;
+    @FXML private TableColumn<Producto, Integer> colExistencia;
+    @FXML private TableColumn<Producto, Boolean> colActivo;
 
-    @FXML
-    private ImageView imgProducto;
-
-    @FXML
-    private Button btnImagen;
-
-    @FXML
-    private Button btnGuardar;
-
-    @FXML
-    private Button btnCerrar;
-
-    @FXML
-    private Button btnLimpiarBusqueda;
-
-    @FXML
-    private TableView<Producto> tblProductos;
-
-    @FXML
-    private TableColumn<Producto, String> colCodigo;
-
-    @FXML
-    private TableColumn<Producto, String> colNombre;
-
-    @FXML
-    private TableColumn<Producto, Categoria> colCategoria;
-
-    @FXML
-    private TableColumn<Producto, BigDecimal> colPrecio;
-
-    @FXML
-    private TableColumn<Producto, Integer> colExistencia;
-
-    @FXML
-    private TableColumn<Producto, Boolean> colActivo;
-
-    @FXML
-    private Label lblContador;
+    @FXML private Label lblContador;
 
     private final ObservableList<Producto> productos =
             FXCollections.observableArrayList();
@@ -99,8 +67,9 @@ public class ProductoController {
     private String rutaImagen;
 
     private final NumberFormat formatoMoneda =
-            NumberFormat.getCurrencyInstance(new Locale("es", "NI"));
-
+            NumberFormat.getCurrencyInstance(
+                    new Locale("es", "NI")
+            );
 
     @FXML
     private void initialize() {
@@ -122,7 +91,6 @@ public class ProductoController {
         txtCodigo.requestFocus();
     }
 
-
     private void cargarCategorias() {
 
         cmbCategoria.setItems(
@@ -133,7 +101,6 @@ public class ProductoController {
                 )
         );
     }
-
 
     private void configurarTabla() {
 
@@ -170,7 +137,6 @@ public class ProductoController {
         colExistencia.setStyle("-fx-alignment: CENTER;");
         colActivo.setStyle("-fx-alignment: CENTER;");
 
-
         colPrecio.setCellFactory(column ->
                 new TableCell<>() {
 
@@ -183,14 +149,18 @@ public class ProductoController {
                         super.updateItem(precio, empty);
 
                         if (empty || precio == null) {
+
                             setText(null);
+
                         } else {
-                            setText(formatoMoneda.format(precio));
+
+                            setText(
+                                    formatoMoneda.format(precio)
+                            );
                         }
                     }
                 }
         );
-
 
         colActivo.setCellFactory(column ->
                 new TableCell<>() {
@@ -230,6 +200,24 @@ public class ProductoController {
                 }
         );
 
+        /*
+         * Interacción profesional:
+         * cuando el usuario selecciona un producto,
+         * el sistema reconoce inmediatamente la selección.
+         */
+        tblProductos.getSelectionModel()
+                .selectedItemProperty()
+                .addListener(
+                        (observable, anterior, seleccionado) -> {
+
+                            if (seleccionado != null) {
+
+                                mostrarProductoSeleccionado(
+                                        seleccionado
+                                );
+                            }
+                        }
+                );
 
         tblProductos.widthProperty().addListener(
                 (observable, anterior, nuevo) -> {
@@ -238,17 +226,51 @@ public class ProductoController {
 
                     if (ancho > 0) {
 
-                        colCodigo.setPrefWidth(ancho * 0.13);
-                        colNombre.setPrefWidth(ancho * 0.25);
-                        colCategoria.setPrefWidth(ancho * 0.18);
-                        colPrecio.setPrefWidth(ancho * 0.14);
-                        colExistencia.setPrefWidth(ancho * 0.14);
-                        colActivo.setPrefWidth(ancho * 0.16);
+                        colCodigo.setPrefWidth(
+                                ancho * 0.13
+                        );
+
+                        colNombre.setPrefWidth(
+                                ancho * 0.25
+                        );
+
+                        colCategoria.setPrefWidth(
+                                ancho * 0.18
+                        );
+
+                        colPrecio.setPrefWidth(
+                                ancho * 0.14
+                        );
+
+                        colExistencia.setPrefWidth(
+                                ancho * 0.14
+                        );
+
+                        colActivo.setPrefWidth(
+                                ancho * 0.16
+                        );
                     }
                 }
         );
     }
 
+    private void mostrarProductoSeleccionado(
+            Producto producto
+    ) {
+
+        if (producto == null) {
+            return;
+        }
+
+        /*
+         * Por ahora la selección solamente se reconoce.
+         * No cargamos los datos en el formulario para evitar
+         * alterar accidentalmente el flujo de registro.
+         *
+         * Esta base permitirá agregar posteriormente
+         * edición y eliminación de manera segura.
+         */
+    }
 
     private void configurarBusqueda() {
 
@@ -257,7 +279,6 @@ public class ProductoController {
                         filtrarProductos(nuevoTexto)
         );
     }
-
 
     private void filtrarProductos(String texto) {
 
@@ -279,12 +300,14 @@ public class ProductoController {
                 String codigo =
                         producto.getCodigo() == null
                                 ? ""
-                                : producto.getCodigo().toLowerCase();
+                                : producto.getCodigo()
+                                .toLowerCase();
 
                 String nombre =
                         producto.getNombre() == null
                                 ? ""
-                                : producto.getNombre().toLowerCase();
+                                : producto.getNombre()
+                                .toLowerCase();
 
                 String categoria =
                         producto.getCategoria() == null
@@ -305,7 +328,6 @@ public class ProductoController {
         actualizarContador();
     }
 
-
     @FXML
     private void limpiarBusqueda() {
 
@@ -318,7 +340,6 @@ public class ProductoController {
         txtBuscar.requestFocus();
     }
 
-
     private void actualizarContador() {
 
         if (lblContador != null) {
@@ -329,13 +350,14 @@ public class ProductoController {
             lblContador.setText(
                     "Mostrando "
                             + cantidad
-                            + (cantidad == 1
-                            ? " producto"
-                            : " productos")
+                            + (
+                            cantidad == 1
+                                    ? " producto"
+                                    : " productos"
+                    )
             );
         }
     }
-
 
     private void configurarValidacionVisual() {
 
@@ -365,7 +387,6 @@ public class ProductoController {
         );
     }
 
-
     private void validarCodigoVisual() {
 
         String codigo =
@@ -388,7 +409,6 @@ public class ProductoController {
         }
     }
 
-
     private boolean codigoExiste(String codigo) {
 
         for (Producto producto : productos) {
@@ -405,7 +425,6 @@ public class ProductoController {
         return false;
     }
 
-
     private void validarTexto(TextField campo) {
 
         if (campo.getText().trim().isEmpty()) {
@@ -418,7 +437,6 @@ public class ProductoController {
         }
     }
 
-
     private void validarCategoria() {
 
         if (cmbCategoria.getValue() == null) {
@@ -430,7 +448,6 @@ public class ProductoController {
             limpiarError(cmbCategoria);
         }
     }
-
 
     private void validarPrecio() {
 
@@ -464,7 +481,6 @@ public class ProductoController {
         }
     }
 
-
     private void validarExistencia() {
 
         String texto =
@@ -497,21 +513,21 @@ public class ProductoController {
         }
     }
 
-
     private void marcarError(Control control) {
 
-        if (!control.getStyleClass().contains("field-error")) {
+        if (!control.getStyleClass()
+                .contains("field-error")) {
 
-            control.getStyleClass().add("field-error");
+            control.getStyleClass()
+                    .add("field-error");
         }
     }
 
-
     private void limpiarError(Control control) {
 
-        control.getStyleClass().remove("field-error");
+        control.getStyleClass()
+                .remove("field-error");
     }
-
 
     private void limpiarValidaciones() {
 
@@ -521,7 +537,6 @@ public class ProductoController {
         limpiarError(txtExistencia);
         limpiarError(cmbCategoria);
     }
-
 
     private void configurarTooltips() {
 
@@ -592,7 +607,6 @@ public class ProductoController {
         );
     }
 
-
     private void configurarTooltip(
             Control control,
             String texto
@@ -619,7 +633,6 @@ public class ProductoController {
 
         control.setTooltip(tooltip);
     }
-
 
     @FXML
     private void seleccionarImagen() {
@@ -658,7 +671,6 @@ public class ProductoController {
         }
     }
 
-
     @FXML
     private void guardar() {
 
@@ -668,7 +680,6 @@ public class ProductoController {
         String nombre =
                 txtNombre.getText().trim();
 
-
         if (codigo.isEmpty()
                 || nombre.isEmpty()
                 || txtPrecio.getText().isBlank()
@@ -676,9 +687,13 @@ public class ProductoController {
                 || cmbCategoria.getValue() == null) {
 
             validarCodigoVisual();
+
             validarTexto(txtNombre);
+
             validarPrecio();
+
             validarExistencia();
+
             validarCategoria();
 
             mostrarMensaje(
@@ -690,7 +705,6 @@ public class ProductoController {
             return;
         }
 
-
         if (codigoExiste(codigo)) {
 
             marcarError(txtCodigo);
@@ -699,7 +713,9 @@ public class ProductoController {
                     Alert.AlertType.WARNING,
                     "Código duplicado",
                     "Ya existe un producto registrado "
-                            + "con el código \"" + codigo + "\"."
+                            + "con el código \""
+                            + codigo
+                            + "\"."
             );
 
             txtCodigo.requestFocus();
@@ -707,24 +723,27 @@ public class ProductoController {
             return;
         }
 
-
         try {
 
             BigDecimal precio =
                     new BigDecimal(
-                            txtPrecio.getText().trim()
+                            txtPrecio
+                                    .getText()
+                                    .trim()
                     );
 
             int existencia =
                     Integer.parseInt(
-                            txtExistencia.getText().trim()
+                            txtExistencia
+                                    .getText()
+                                    .trim()
                     );
-
 
             if (precio.signum() <= 0
                     || existencia < 0) {
 
                 validarPrecio();
+
                 validarExistencia();
 
                 mostrarMensaje(
@@ -736,7 +755,6 @@ public class ProductoController {
 
                 return;
             }
-
 
             Producto producto =
                     new Producto(
@@ -750,13 +768,11 @@ public class ProductoController {
                             chkActivo.isSelected()
                     );
 
-
             productos.add(producto);
 
             filtrarProductos(
                     txtBuscar.getText()
             );
-
 
             mostrarMensaje(
                     Alert.AlertType.INFORMATION,
@@ -765,7 +781,6 @@ public class ProductoController {
                             + "al catálogo."
             );
 
-
             limpiar();
 
             txtCodigo.requestFocus();
@@ -773,6 +788,7 @@ public class ProductoController {
         } catch (NumberFormatException e) {
 
             validarPrecio();
+
             validarExistencia();
 
             mostrarMensaje(
@@ -784,7 +800,6 @@ public class ProductoController {
         }
     }
 
-
     @FXML
     private void cerrar() {
 
@@ -795,7 +810,6 @@ public class ProductoController {
 
         stage.close();
     }
-
 
     private void limpiar() {
 
@@ -818,8 +832,11 @@ public class ProductoController {
         rutaImagen = null;
 
         limpiarValidaciones();
-    }
 
+        tblProductos
+                .getSelectionModel()
+                .clearSelection();
+    }
 
     private void mostrarMensaje(
             Alert.AlertType tipo,
@@ -844,34 +861,37 @@ public class ProductoController {
                 .getStyleClass()
                 .add("app-alert");
 
-
         switch (tipo) {
 
             case INFORMATION ->
                     alerta.getDialogPane()
                             .getStyleClass()
-                            .add("app-alert-information");
+                            .add(
+                                    "app-alert-information"
+                            );
 
             case WARNING ->
                     alerta.getDialogPane()
                             .getStyleClass()
-                            .add("app-alert-warning");
+                            .add(
+                                    "app-alert-warning"
+                            );
 
             case ERROR ->
                     alerta.getDialogPane()
                             .getStyleClass()
-                            .add("app-alert-error");
+                            .add(
+                                    "app-alert-error"
+                            );
 
             default -> {
             }
         }
 
-
         var hojaEstilos =
-                getClass()
-                        .getResource(
-                                "/ni/edu/uam/facturacion/styles/app.css"
-                        );
+                getClass().getResource(
+                        "/ni/edu/uam/facturacion/styles/app.css"
+                );
 
         if (hojaEstilos != null) {
 
@@ -881,7 +901,6 @@ public class ProductoController {
                             hojaEstilos.toExternalForm()
                     );
         }
-
 
         alerta.showAndWait();
     }
