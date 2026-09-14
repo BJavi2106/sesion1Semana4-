@@ -15,8 +15,6 @@
             fx:controller="ni.edu.uam.facturacion.controller.MenuPrincipalController"
             stylesheets="@../styles/app.css">
 
-    <!-- ENCABEZADO -->
-
     <top>
 
         <VBox>
@@ -36,15 +34,15 @@
 
             </HBox>
 
-
-            <!-- MENÚ -->
-
             <MenuBar styleClass="main-menu">
 
                 <Menu text="Sistema">
 
                     <MenuItem text="Productos"
                               onAction="#abrirProductos"/>
+
+                    <MenuItem text="Configuración"
+                              onAction="#abrirConfiguracion"/>
 
                     <MenuItem text="Salir"
                               onAction="#salir"/>
@@ -60,9 +58,6 @@
 
             </MenuBar>
 
-
-            <!-- BARRA DE ACCIONES -->
-
             <HBox styleClass="toolbar"
                   spacing="10"
                   alignment="CENTER_LEFT">
@@ -72,22 +67,27 @@
                         onAction="#abrirProductos">
 
                     <tooltip>
-
                         <Tooltip text="Gestión de productos&#10;Administra el catálogo de productos del sistema."/>
-
                     </tooltip>
 
                 </Button>
 
+                <Button text="Configuración"
+                        styleClass="button-secondary"
+                        onAction="#abrirConfiguracion">
+
+                    <tooltip>
+                        <Tooltip text="Configuración&#10;Personaliza la apariencia y preferencias del sistema."/>
+                    </tooltip>
+
+                </Button>
 
                 <Button text="Salir"
                         styleClass="button-danger"
                         onAction="#salir">
 
                     <tooltip>
-
                         <Tooltip text="Salir&#10;Cierra el sistema de facturación."/>
-
                     </tooltip>
 
                 </Button>
@@ -97,9 +97,6 @@
         </VBox>
 
     </top>
-
-
-    <!-- PANEL PRINCIPAL -->
 
     <center>
 
@@ -116,14 +113,8 @@
 
             </VBox>
 
-
-            <!-- TARJETAS -->
-
             <HBox spacing="18"
                   VBox.vgrow="ALWAYS">
-
-
-                <!-- PRODUCTOS -->
 
                 <VBox styleClass="dashboard-card"
                       spacing="10"
@@ -142,17 +133,12 @@
                             onAction="#abrirProductos">
 
                         <tooltip>
-
                             <Tooltip text="Abrir gestión de productos&#10;Permite registrar y consultar productos."/>
-
                         </tooltip>
 
                     </Button>
 
                 </VBox>
-
-
-                <!-- SISTEMA -->
 
                 <VBox styleClass="dashboard-card"
                       spacing="10"
@@ -166,10 +152,17 @@
                            styleClass="dashboard-card-text"
                            VBox.vgrow="ALWAYS"/>
 
+                    <Button text="Configuración"
+                            styleClass="button-secondary"
+                            onAction="#abrirConfiguracion">
+
+                        <tooltip>
+                            <Tooltip text="Abrir configuración&#10;Personaliza las preferencias del sistema."/>
+                        </tooltip>
+
+                    </Button>
+
                 </VBox>
-
-
-                <!-- INFORMACIÓN -->
 
                 <VBox styleClass="dashboard-card"
                       spacing="10"
@@ -183,6 +176,16 @@
                            styleClass="dashboard-card-text"
                            VBox.vgrow="ALWAYS"/>
 
+                    <Button text="Acerca del sistema"
+                            styleClass="button-secondary"
+                            onAction="#acercaDe">
+
+                        <tooltip>
+                            <Tooltip text="Información del sistema&#10;Muestra información general del proyecto."/>
+                        </tooltip>
+
+                    </Button>
+
                 </VBox>
 
             </HBox>
@@ -190,9 +193,6 @@
         </VBox>
 
     </center>
-
-
-    <!-- PIE -->
 
     <bottom>
 

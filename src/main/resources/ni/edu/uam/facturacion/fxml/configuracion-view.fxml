@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ni.edu.uam.facturacion.controller.ConfiguracionController"
+            stylesheets="@../styles/app.css">
+
+    <top>
+
+        <VBox styleClass="header"
+              spacing="3">
+
+            <Label text="Configuración"
+                   styleClass="header-title"/>
+
+            <Label text="Personalice la apariencia y el comportamiento del sistema."
+                   styleClass="header-subtitle"/>
+
+        </VBox>
+
+    </top>
+
+    <center>
+
+        <VBox styleClass="content-area"
+              spacing="18">
+
+            <VBox styleClass="card"
+                  spacing="14">
+
+                <VBox spacing="3">
+
+                    <Label text="Apariencia"
+                           styleClass="card-title"/>
+
+                    <Label text="Los cambios se muestran inmediatamente como vista previa."
+                           styleClass="card-subtitle"/>
+
+                </VBox>
+
+                <Separator/>
+
+                <GridPane hgap="18"
+                          vgap="12">
+
+                    <Label text="Tema:"
+                           styleClass="label-form"
+                           GridPane.columnIndex="0"
+                           GridPane.rowIndex="0"/>
+
+                    <HBox spacing="12"
+                          GridPane.columnIndex="1"
+                          GridPane.rowIndex="0">
+
+                        <RadioButton fx:id="rbClaro"
+                                     text="Modo claro"/>
+
+                        <RadioButton fx:id="rbOscuro"
+                                     text="Modo oscuro"/>
+
+                    </HBox>
+
+                    <Label text="Color principal:"
+                           styleClass="label-form"
+                           GridPane.columnIndex="0"
+                           GridPane.rowIndex="1"/>
+
+                    <ComboBox fx:id="cmbColorPrincipal"
+                              prefWidth="180"
+                              GridPane.columnIndex="1"
+                              GridPane.rowIndex="1">
+
+                        <tooltip>
+                            <Tooltip text="Seleccione el color principal de la aplicación."/>
+                        </tooltip>
+
+                    </ComboBox>
+
+                    <Label text="Tamaño de fuente:"
+                           styleClass="label-form"
+                           GridPane.columnIndex="0"
+                           GridPane.rowIndex="2"/>
+
+                    <ComboBox fx:id="cmbTamanoFuente"
+                              prefWidth="180"
+                              GridPane.columnIndex="1"
+                              GridPane.rowIndex="2">
+
+                        <tooltip>
+                            <Tooltip text="Seleccione el tamaño general de los textos."/>
+                        </tooltip>
+
+                    </ComboBox>
+
+                </GridPane>
+
+            </VBox>
+
+            <VBox styleClass="card"
+                  spacing="14">
+
+                <VBox spacing="3">
+
+                    <Label text="Interfaz"
+                           styleClass="card-title"/>
+
+                    <Label text="Controle los elementos visibles y el comportamiento de la interfaz."
+                           styleClass="card-subtitle"/>
+
+                </VBox>
+
+                <Separator/>
+
+                <VBox spacing="12">
+
+                    <CheckBox fx:id="chkBarraHerramientas"
+                              text="Mostrar barra de herramientas">
+
+                        <tooltip>
+                            <Tooltip text="Muestra u oculta la barra de acciones principales."/>
+                        </tooltip>
+
+                    </CheckBox>
+
+                    <CheckBox fx:id="chkBarraEstado"
+                              text="Mostrar barra de estado">
+
+                        <tooltip>
+                            <Tooltip text="Muestra u oculta la barra inferior del sistema."/>
+                        </tooltip>
+
+                    </CheckBox>
+
+                    <CheckBox fx:id="chkAnimaciones"
+                              text="Activar animaciones">
+
+                        <tooltip>
+                            <Tooltip text="Permite utilizar animaciones visuales de la interfaz."/>
+                        </tooltip>
+
+                    </CheckBox>
+
+                </VBox>
+
+            </VBox>
+
+        </VBox>
+
+    </center>
+
+    <bottom>
+
+        <HBox styleClass="status-bar"
+              alignment="CENTER_RIGHT"
+              spacing="10">
+
+            <Button text="Restaurar"
+                    styleClass="button-secondary"
+                    onAction="#restaurar">
+
+                <tooltip>
+                    <Tooltip text="Restaurar los valores predeterminados como vista previa."/>
+                </tooltip>
+
+            </Button>
+
+            <Button text="Cancelar"
+                    styleClass="button-secondary"
+                    onAction="#cerrar">
+
+                <tooltip>
+                    <Tooltip text="Descartar los cambios realizados."/>
+                </tooltip>
+
+            </Button>
+
+            <Button text="Guardar cambios"
+                    styleClass="button-primary"
+                    onAction="#guardar">
+
+                <tooltip>
+                    <Tooltip text="Guardar permanentemente las preferencias seleccionadas."/>
+                </tooltip>
+
+            </Button>
+
+        </HBox>
+
+    </bottom>
+
+</BorderPane>

@@ -4,6 +4,11 @@
    EL GÜEGÜENSE
    ========================================================= */
 
+
+/* =========================================================
+   CONFIGURACIÓN GENERAL
+   ========================================================= */
+
 .root {
     -fx-font-family: "Segoe UI", Arial, sans-serif;
     -fx-background-color: #f4f6f8;
@@ -12,7 +17,7 @@
 
 
 /* =========================================================
-   ENCABEZADOS
+   ENCABEZADO
    ========================================================= */
 
 .header {
@@ -45,7 +50,7 @@
 
 
 /* =========================================================
-   MENÚ PRINCIPAL
+   MENU PRINCIPAL
    ========================================================= */
 
 .main-menu {
@@ -62,6 +67,18 @@
 
 .main-menu .menu:hover,
 .main-menu .menu:showing {
+    -fx-background-color: #eef2f7;
+}
+
+.main-menu .menu-item {
+    -fx-background-color: #ffffff;
+}
+
+.main-menu .menu-item .label {
+    -fx-text-fill: #1f2937;
+}
+
+.main-menu .menu-item:hover {
     -fx-background-color: #eef2f7;
 }
 
@@ -98,11 +115,6 @@
     -fx-font-size: 13px;
 }
 
-
-/* =========================================================
-   TARJETAS
-   ========================================================= */
-
 .dashboard-card {
     -fx-background-color: white;
     -fx-background-radius: 10px;
@@ -138,7 +150,7 @@
 
 
 /* =========================================================
-   TARJETAS GENERALES
+   TARJETAS
    ========================================================= */
 
 .card {
@@ -161,15 +173,15 @@
     -fx-font-size: 12px;
 }
 
-
-/* =========================================================
-   ÁREA DE CONTENIDO
-   ========================================================= */
-
 .content-area {
     -fx-padding: 18px;
     -fx-background-color: #f4f6f8;
 }
+
+
+/* =========================================================
+   FORMULARIOS
+   ========================================================= */
 
 .product-form {
     -fx-padding: 16px;
@@ -183,7 +195,7 @@
 
 
 /* =========================================================
-   CAMPOS
+   CAMPOS DE TEXTO
    ========================================================= */
 
 .text-field {
@@ -234,14 +246,6 @@
 .field-error:focused {
     -fx-border-color: #b91c1c !important;
     -fx-border-width: 2px !important;
-    -fx-effect: dropshadow(
-            gaussian,
-            rgba(220, 38, 38, 0.25),
-            7,
-            0.15,
-            0,
-            1
-    );
 }
 
 
@@ -265,6 +269,7 @@
 }
 
 .combo-box .list-cell {
+    -fx-background-color: transparent;
     -fx-text-fill: #1f2937;
 }
 
@@ -280,6 +285,56 @@
 
 .check-box:hover {
     -fx-text-fill: #1d4ed8;
+}
+
+.check-box .box {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #9ca3af;
+    -fx-border-width: 1px;
+    -fx-border-radius: 3px;
+    -fx-background-radius: 3px;
+}
+
+.check-box:selected .box {
+    -fx-background-color: #2563eb;
+    -fx-border-color: #2563eb;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: #ffffff;
+}
+
+
+/* =========================================================
+   RADIO BUTTON
+   ========================================================= */
+
+.radio-button {
+    -fx-text-fill: #374151;
+    -fx-font-size: 13px;
+}
+
+.radio-button:hover {
+    -fx-text-fill: #1d4ed8;
+}
+
+.radio-button .radio {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #9ca3af;
+    -fx-border-width: 1px;
+    -fx-border-radius: 100px;
+    -fx-background-radius: 100px;
+    -fx-padding: 3px;
+}
+
+.radio-button:selected .radio {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #2563eb;
+}
+
+.radio-button:selected .radio .dot {
+    -fx-background-color: #2563eb;
+    -fx-background-radius: 100px;
 }
 
 
@@ -419,6 +474,10 @@
     -fx-font-size: 12px;
 }
 
+.table-view .placeholder .label {
+    -fx-text-fill: #94a3b8;
+}
+
 
 /* =========================================================
    BARRA DE ESTADO
@@ -438,7 +497,7 @@
 
 
 /* =========================================================
-   TOOLTIP PROFESIONAL
+   TOOLTIP
    ========================================================= */
 
 .tooltip {
@@ -452,14 +511,6 @@
     -fx-font-family: "Segoe UI", Arial, sans-serif;
     -fx-font-size: 12px;
     -fx-font-weight: normal;
-    -fx-effect: dropshadow(
-            gaussian,
-            rgba(0, 0, 0, 0.30),
-            10,
-            0.18,
-            0,
-            4
-    );
 }
 
 
@@ -529,3 +580,764 @@
 .app-alert-information .header-panel {
     -fx-background-color: #1d4ed8;
 }
+
+
+/* =========================================================
+   TEMA OSCURO
+   ESTILO INSPIRADO EN WINDOWS 11
+   ========================================================= */
+
+.theme-oscuro {
+    -fx-background-color: #1f1f1f;
+    -fx-text-fill: #f3f3f3;
+}
+
+
+/* =========================================================
+   ENCABEZADO OSCURO
+   ========================================================= */
+
+.theme-oscuro .header {
+    -fx-background-color: #191919;
+}
+
+.theme-oscuro .brand-title,
+.theme-oscuro .header-title {
+    -fx-text-fill: #ffffff;
+}
+
+.theme-oscuro .brand-subtitle,
+.theme-oscuro .header-subtitle {
+    -fx-text-fill: #c8c8c8;
+}
+
+
+/* =========================================================
+   MENU OSCURO
+   ========================================================= */
+
+.theme-oscuro .main-menu {
+    -fx-background-color: #1f1f1f;
+    -fx-border-color: #353535;
+}
+
+.theme-oscuro .main-menu .label {
+    -fx-text-fill: #f3f3f3;
+}
+
+.theme-oscuro .main-menu .menu:hover,
+.theme-oscuro .main-menu .menu:showing {
+    -fx-background-color: #2d2d2d;
+}
+
+.theme-oscuro .main-menu .menu-item {
+    -fx-background-color: #252525;
+}
+
+.theme-oscuro .main-menu .menu-item .label {
+    -fx-text-fill: #f3f3f3;
+}
+
+.theme-oscuro .main-menu .menu-item:hover {
+    -fx-background-color: #383838;
+}
+
+
+/* =========================================================
+   TOOLBAR OSCURA
+   ========================================================= */
+
+.theme-oscuro .toolbar {
+    -fx-background-color: #1f1f1f;
+    -fx-border-color: #353535;
+}
+
+
+/* =========================================================
+   DASHBOARD OSCURO
+   ========================================================= */
+
+.theme-oscuro .dashboard {
+    -fx-background-color: #1f1f1f;
+}
+
+.theme-oscuro .content-area {
+    -fx-background-color: #1f1f1f;
+}
+
+.theme-oscuro .dashboard-title {
+    -fx-text-fill: #ffffff;
+}
+
+.theme-oscuro .dashboard-subtitle {
+    -fx-text-fill: #b8b8b8;
+}
+
+.theme-oscuro .dashboard-card {
+    -fx-background-color: #292929;
+    -fx-border-color: #3a3a3a;
+}
+
+.theme-oscuro .dashboard-card:hover {
+    -fx-background-color: #2d2d2d;
+    -fx-border-color: #4c8dff;
+    -fx-effect: dropshadow(
+            gaussian,
+            rgba(0, 0, 0, 0.35),
+            12,
+            0.18,
+            0,
+            4
+    );
+}
+
+.theme-oscuro .dashboard-card-title {
+    -fx-text-fill: #ffffff;
+}
+
+.theme-oscuro .dashboard-card-text {
+    -fx-text-fill: #c2c2c2;
+}
+
+
+/* =========================================================
+   TARJETAS OSCURAS
+   ========================================================= */
+
+.theme-oscuro .card {
+    -fx-background-color: #292929;
+    -fx-border-color: #3a3a3a;
+}
+
+.theme-oscuro .card-title {
+    -fx-text-fill: #ffffff;
+}
+
+.theme-oscuro .card-subtitle {
+    -fx-text-fill: #b8b8b8;
+}
+
+
+/* =========================================================
+   ETIQUETAS DE FORMULARIO OSCURAS
+   ========================================================= */
+
+.theme-oscuro .label-form {
+    -fx-text-fill: #eeeeee;
+}
+
+
+/* =========================================================
+   TEXTFIELD OSCURO
+   ========================================================= */
+
+.theme-oscuro .text-field {
+    -fx-background-color: #242424;
+    -fx-border-color: #505050;
+    -fx-text-fill: #ffffff;
+    -fx-prompt-text-fill: #969696;
+}
+
+.theme-oscuro .text-field:hover {
+    -fx-background-color: #292929;
+    -fx-border-color: #666666;
+}
+
+.theme-oscuro .text-field:focused {
+    -fx-background-color: #242424;
+    -fx-border-color: #60a5fa;
+    -fx-border-width: 1.5px;
+    -fx-effect: dropshadow(
+            gaussian,
+            rgba(96, 165, 250, 0.20),
+            7,
+            0.12,
+            0,
+            1
+    );
+}
+
+
+/* =========================================================
+   COMBOBOX OSCURO
+   ========================================================= */
+
+.theme-oscuro .combo-box {
+    -fx-background-color: #242424;
+    -fx-border-color: #505050;
+}
+
+.theme-oscuro .combo-box:hover {
+    -fx-background-color: #292929;
+    -fx-border-color: #666666;
+}
+
+.theme-oscuro .combo-box:focused {
+    -fx-border-color: #60a5fa;
+}
+
+.theme-oscuro .combo-box .list-cell {
+    -fx-background-color: #242424;
+    -fx-text-fill: #ffffff;
+}
+
+.theme-oscuro .combo-box .arrow {
+    -fx-background-color: #d0d0d0;
+}
+
+.theme-oscuro .combo-box-popup .list-view {
+    -fx-background-color: #242424;
+    -fx-border-color: #505050;
+}
+
+.theme-oscuro .combo-box-popup .list-cell {
+    -fx-background-color: #242424;
+    -fx-text-fill: #ffffff;
+}
+
+.theme-oscuro .combo-box-popup .list-cell:hover {
+    -fx-background-color: #383838;
+}
+
+.theme-oscuro .combo-box-popup .list-cell:filled:selected {
+    -fx-background-color: #404040;
+    -fx-text-fill: #ffffff;
+}
+
+
+/* =========================================================
+   CHECKBOX OSCURO
+   ========================================================= */
+
+.theme-oscuro .check-box {
+    -fx-text-fill: #eeeeee;
+}
+
+.theme-oscuro .check-box:hover {
+    -fx-text-fill: #ffffff;
+}
+
+.theme-oscuro .check-box .box {
+    -fx-background-color: #242424;
+    -fx-border-color: #707070;
+    -fx-border-width: 1px;
+}
+
+.theme-oscuro .check-box:selected .box {
+    -fx-background-color: #3b82f6;
+    -fx-border-color: #60a5fa;
+}
+
+.theme-oscuro .check-box:selected .mark {
+    -fx-background-color: #ffffff;
+}
+
+
+/* =========================================================
+   RADIO BUTTON OSCURO
+   ========================================================= */
+
+.theme-oscuro .radio-button {
+    -fx-text-fill: #eeeeee;
+}
+
+.theme-oscuro .radio-button:hover {
+    -fx-text-fill: #ffffff;
+}
+
+.theme-oscuro .radio-button .radio {
+    -fx-background-color: #242424;
+    -fx-border-color: #707070;
+    -fx-border-width: 1px;
+}
+
+.theme-oscuro .radio-button:selected .radio {
+    -fx-background-color: #242424;
+    -fx-border-color: #60a5fa;
+}
+
+.theme-oscuro .radio-button:selected .radio .dot {
+    -fx-background-color: #60a5fa;
+}
+
+
+/* =========================================================
+   BOTONES SECUNDARIOS OSCUROS
+   ========================================================= */
+
+.theme-oscuro .button-secondary {
+    -fx-background-color: #383838;
+    -fx-text-fill: #f3f3f3;
+    -fx-border-color: #4a4a4a;
+    -fx-border-width: 1px;
+}
+
+.theme-oscuro .button-secondary:hover {
+    -fx-background-color: #454545;
+    -fx-border-color: #5a5a5a;
+}
+
+.theme-oscuro .button-secondary:pressed {
+    -fx-background-color: #303030;
+}
+
+
+/* =========================================================
+   BOTONES PRIMARIOS OSCUROS
+   ========================================================= */
+
+.theme-oscuro .button-primary {
+    -fx-background-color: #3b82f6;
+    -fx-text-fill: #ffffff;
+}
+
+.theme-oscuro .button-primary:hover {
+    -fx-background-color: #4b8ff7;
+}
+
+.theme-oscuro .button-primary:pressed {
+    -fx-background-color: #2563eb;
+}
+
+
+/* =========================================================
+   BOTONES DE ÉXITO OSCUROS
+   ========================================================= */
+
+.theme-oscuro .button-success {
+    -fx-background-color: #22a653;
+    -fx-text-fill: #ffffff;
+}
+
+.theme-oscuro .button-success:hover {
+    -fx-background-color: #2fba61;
+}
+
+.theme-oscuro .button-success:pressed {
+    -fx-background-color: #198a43;
+}
+
+
+/* =========================================================
+   BOTONES DE PELIGRO OSCUROS
+   ========================================================= */
+
+.theme-oscuro .button-danger {
+    -fx-background-color: #dc3545;
+    -fx-text-fill: #ffffff;
+}
+
+.theme-oscuro .button-danger:hover {
+    -fx-background-color: #e24b59;
+}
+
+.theme-oscuro .button-danger:pressed {
+    -fx-background-color: #bd2938;
+}
+
+
+/* =========================================================
+   IMAGEN OSCURA
+   ========================================================= */
+
+.theme-oscuro .image-container {
+    -fx-background-color: #242424;
+    -fx-border-color: #505050;
+}
+
+.theme-oscuro .image-placeholder {
+    -fx-text-fill: #8f8f8f;
+}
+
+
+/* =========================================================
+   TABLA OSCURA
+   ========================================================= */
+
+.theme-oscuro .table-view {
+    -fx-background-color: #202020;
+    -fx-border-color: #444444;
+}
+
+.theme-oscuro .table-view .column-header-background {
+    -fx-background-color: #2b2b2b;
+}
+
+.theme-oscuro .table-view .column-header {
+    -fx-background-color: #2b2b2b;
+    -fx-border-color: #414141;
+}
+
+.theme-oscuro .table-view .column-header .label {
+    -fx-text-fill: #f0f0f0;
+}
+
+.theme-oscuro .table-row-cell {
+    -fx-background-color: #202020;
+    -fx-border-color: transparent transparent #303030 transparent;
+}
+
+.theme-oscuro .table-row-cell:odd {
+    -fx-background-color: #252525;
+}
+
+.theme-oscuro .table-row-cell:hover {
+    -fx-background-color: #303030;
+}
+
+.theme-oscuro .table-row-cell:selected {
+    -fx-background-color: #3a4f6b;
+}
+
+.theme-oscuro .table-row-cell:selected .text {
+    -fx-fill: #ffffff;
+}
+
+.theme-oscuro .table-cell {
+    -fx-text-fill: #dddddd;
+}
+
+.theme-oscuro .table-view .placeholder .label {
+    -fx-text-fill: #999999;
+}
+
+
+/* =========================================================
+   SCROLLBAR OSCURA
+   ========================================================= */
+
+.theme-oscuro .scroll-bar {
+    -fx-background-color: #1f1f1f;
+}
+
+.theme-oscuro .scroll-bar .track {
+    -fx-background-color: #252525;
+    -fx-border-color: transparent;
+}
+
+.theme-oscuro .scroll-bar .thumb {
+    -fx-background-color: #555555;
+    -fx-background-radius: 6px;
+}
+
+.theme-oscuro .scroll-bar .thumb:hover {
+    -fx-background-color: #707070;
+}
+
+.theme-oscuro .scroll-bar .increment-button,
+.theme-oscuro .scroll-bar .decrement-button {
+    -fx-background-color: #1f1f1f;
+    -fx-border-color: transparent;
+}
+
+.theme-oscuro .scroll-bar .increment-arrow,
+.theme-oscuro .scroll-bar .decrement-arrow {
+    -fx-background-color: #999999;
+}
+
+
+/* =========================================================
+   SEPARADORES
+   ========================================================= */
+
+.theme-oscuro .separator .line {
+    -fx-border-color: #414141;
+}
+
+
+/* =========================================================
+   BARRA DE ESTADO OSCURA
+   ========================================================= */
+
+.theme-oscuro .status-bar {
+    -fx-background-color: #1f1f1f;
+    -fx-border-color: #353535;
+}
+
+.theme-oscuro .status-label {
+    -fx-text-fill: #a8a8a8;
+}
+
+
+/* =========================================================
+   TOOLTIP OSCURO
+   ========================================================= */
+
+.theme-oscuro .tooltip {
+    -fx-background-color: #303030;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #505050;
+}
+
+
+/* =========================================================
+   ALERTAS OSCURAS
+   ========================================================= */
+
+.theme-oscuro .app-alert {
+    -fx-background-color: #292929;
+    -fx-border-color: #454545;
+}
+
+.theme-oscuro .app-alert .header-panel {
+    -fx-background-color: #191919;
+}
+
+.theme-oscuro .app-alert .header-panel .label {
+    -fx-text-fill: #ffffff;
+}
+
+.theme-oscuro .app-alert .content {
+    -fx-background-color: #292929;
+}
+
+.theme-oscuro .app-alert .content .label {
+    -fx-text-fill: #dddddd;
+}
+
+
+/* =========================================================
+   COLORES DE ACENTO
+   ========================================================= */
+
+.accent-azul .button-primary {
+    -fx-background-color: #2563eb;
+}
+
+.accent-azul .button-primary:hover {
+    -fx-background-color: #1d4ed8;
+}
+
+.accent-azul .text-field:focused,
+.accent-azul .combo-box:focused {
+    -fx-border-color: #2563eb;
+}
+
+.accent-azul .dashboard-card:hover {
+    -fx-border-color: #2563eb;
+}
+
+
+.accent-verde .button-primary {
+    -fx-background-color: #16a34a;
+}
+
+.accent-verde .button-primary:hover {
+    -fx-background-color: #15803d;
+}
+
+.accent-verde .text-field:focused,
+.accent-verde .combo-box:focused {
+    -fx-border-color: #16a34a;
+}
+
+.accent-verde .dashboard-card:hover {
+    -fx-border-color: #16a34a;
+}
+
+
+.accent-morado .button-primary {
+    -fx-background-color: #7c3aed;
+}
+
+.accent-morado .button-primary:hover {
+    -fx-background-color: #6d28d9;
+}
+
+.accent-morado .text-field:focused,
+.accent-morado .combo-box:focused {
+    -fx-border-color: #7c3aed;
+}
+
+.accent-morado .dashboard-card:hover {
+    -fx-border-color: #7c3aed;
+}
+
+
+.accent-naranja .button-primary {
+    -fx-background-color: #ea580c;
+}
+
+.accent-naranja .button-primary:hover {
+    -fx-background-color: #c2410c;
+}
+
+.accent-naranja .text-field:focused,
+.accent-naranja .combo-box:focused {
+    -fx-border-color: #ea580c;
+}
+
+.accent-naranja .dashboard-card:hover {
+    -fx-border-color: #ea580c;
+}
+
+
+.accent-rojo .button-primary {
+    -fx-background-color: #dc2626;
+}
+
+.accent-rojo .button-primary:hover {
+    -fx-background-color: #b91c1c;
+}
+
+.accent-rojo .text-field:focused,
+.accent-rojo .combo-box:focused {
+    -fx-border-color: #dc2626;
+}
+
+.accent-rojo .dashboard-card:hover {
+    -fx-border-color: #dc2626;
+}
+
+
+/* =========================================================
+   ACENTOS EN MODO OSCURO
+   ========================================================= */
+
+.theme-oscuro.accent-azul .dashboard-card:hover,
+.theme-oscuro.accent-azul .text-field:focused,
+.theme-oscuro.accent-azul .combo-box:focused {
+    -fx-border-color: #60a5fa;
+}
+
+.theme-oscuro.accent-verde .dashboard-card:hover,
+.theme-oscuro.accent-verde .text-field:focused,
+.theme-oscuro.accent-verde .combo-box:focused {
+    -fx-border-color: #4ade80;
+}
+
+.theme-oscuro.accent-morado .dashboard-card:hover,
+.theme-oscuro.accent-morado .text-field:focused,
+.theme-oscuro.accent-morado .combo-box:focused {
+    -fx-border-color: #a78bfa;
+}
+
+.theme-oscuro.accent-naranja .dashboard-card:hover,
+.theme-oscuro.accent-naranja .text-field:focused,
+.theme-oscuro.accent-naranja .combo-box:focused {
+    -fx-border-color: #fb923c;
+}
+
+.theme-oscuro.accent-rojo .dashboard-card:hover,
+.theme-oscuro.accent-rojo .text-field:focused,
+.theme-oscuro.accent-rojo .combo-box:focused {
+    -fx-border-color: #f87171;
+}
+
+
+/* =========================================================
+   TAMAÑO DE FUENTE
+   ========================================================= */
+
+.font-pequena {
+    -fx-font-size: 12px;
+}
+
+.font-normal {
+    -fx-font-size: 13px;
+}
+
+.font-grande {
+    -fx-font-size: 15px;
+}
+
+.font-pequena .dashboard-title {
+    -fx-font-size: 20px;
+}
+
+.font-normal .dashboard-title {
+    -fx-font-size: 22px;
+}
+
+.font-grande .dashboard-title {
+    -fx-font-size: 25px;
+}
+
+.font-pequena .dashboard-card-title {
+    -fx-font-size: 15px;
+}
+
+.font-normal .dashboard-card-title {
+    -fx-font-size: 16px;
+}
+
+.font-grande .dashboard-card-title {
+    -fx-font-size: 18px;
+}
+
+.font-pequena .card-title {
+    -fx-font-size: 16px;
+}
+
+.font-normal .card-title {
+    -fx-font-size: 17px;
+}
+
+.font-grande .card-title {
+    -fx-font-size: 19px;
+}
+
+.font-pequena .dashboard-card-text,
+.font-pequena .dashboard-subtitle {
+    -fx-font-size: 12px;
+}
+
+.font-normal .dashboard-card-text,
+.font-normal .dashboard-subtitle {
+    -fx-font-size: 13px;
+}
+
+.font-grande .dashboard-card-text,
+.font-grande .dashboard-subtitle {
+    -fx-font-size: 15px;
+}
+
+.font-pequena .label-form {
+    -fx-font-size: 11px;
+}
+
+.font-normal .label-form {
+    -fx-font-size: 12px;
+}
+
+.font-grande .label-form {
+    -fx-font-size: 14px;
+}
+
+.font-pequena .button {
+    -fx-font-size: 11px;
+}
+
+.font-normal .button {
+    -fx-font-size: 12px;
+}
+
+.font-grande .button {
+    -fx-font-size: 14px;
+}
+
+.font-pequena .table-cell {
+    -fx-font-size: 11px;
+}
+
+.font-normal .table-cell {
+    -fx-font-size: 12px;
+}
+
+.font-grande .table-cell {
+    -fx-font-size: 14px;
+}
+
+
+/* =========================================================
+   ANIMACIONES
+   ========================================================= */
+
+.animations-off {
+    -fx-opacity: 1;
+}
+
+
+/* =========================================================
+   FIN DE LA HOJA DE ESTILOS
+   ========================================================= */

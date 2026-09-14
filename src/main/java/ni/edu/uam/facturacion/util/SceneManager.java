@@ -1,45 +1,64 @@
 package ni.edu.uam.facturacion.util;
 
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
 
-public class SceneManager {
+public final class SceneManager {
 
     private SceneManager() {
     }
 
-    public static void cambiarEscena(
-            Stage stage,
-            String rutaFXML,
-            String titulo
-    ) throws IOException {
+    public static void abrirVentana(
+            String recurso,
+            String titulo) throws IOException {
 
-        URL recurso = SceneManager.class.getResource(rutaFXML);
+        URL url =
+                SceneManager.class.getResource(
+                        recurso
+                );
 
-        if (recurso == null) {
+        if (url == null) {
 
             throw new IOException(
-                    "No se encontró el archivo FXML:\n"
-                            + rutaFXML
+                    "FXML no encontrado: " + recurso
             );
         }
 
         FXMLLoader loader =
-                new FXMLLoader(recurso);
+                new FXMLLoader(url);
 
-        Parent root = loader.load();
+        Scene scene =
+                new Scene(
+                        loader.load()
+                );
 
-        Scene scene = new Scene(root);
+        Stage stage =
+                new Stage();
 
         stage.setTitle(titulo);
-
         stage.setScene(scene);
 
-        stage.show();
+        stage.initModality(
+                Modality.APPLICATION_MODAL
+        );
+
+        stage.setResizable(true);
+
+        /*
+         * Aplicamos las preferencias antes de mostrar
+         * la ventana.
+         */
+        TemaManager.aplicarConfiguracionActual();
+
+        /*
+         * showAndWait() ya muestra la ventana y espera
+         * hasta que el usuario la cierre.
+         */
+        stage.showAndWait();
     }
 }
