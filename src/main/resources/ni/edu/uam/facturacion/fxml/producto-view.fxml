@@ -8,128 +8,274 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="ni.edu.uam.facturacion.controller.ProductoController">
+            fx:controller="ni.edu.uam.facturacion.controller.ProductoController"
+            stylesheets="@../styles/app.css">
 
     <top>
-        <Label text="Gestión de Productos"
-               style="-fx-font-size: 20px; -fx-font-weight: bold;">
-            <BorderPane.margin>
-                <Insets top="15" right="15" bottom="15" left="15"/>
-            </BorderPane.margin>
-        </Label>
-    </top>
 
-    <center>
-        <VBox spacing="15">
+        <VBox>
 
-            <GridPane hgap="10" vgap="10">
+            <HBox styleClass="header"
+                  alignment="CENTER_LEFT">
 
-                <Label text="Código:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                <TextField fx:id="txtCodigo"
-                           promptText="Código único"
-                           GridPane.columnIndex="1"
-                           GridPane.rowIndex="0"/>
+                <VBox spacing="2">
 
-                <Label text="Nombre:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                <TextField fx:id="txtNombre"
-                           promptText="Nombre"
-                           GridPane.columnIndex="1"
-                           GridPane.rowIndex="1"/>
+                    <Label text="Gestión de productos"
+                           styleClass="header-title"/>
 
-                <Label text="Categoría:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
-                <ComboBox fx:id="cmbCategoria"
-                          prefWidth="250"
-                          GridPane.columnIndex="1"
-                          GridPane.rowIndex="2"/>
+                    <Label text="Registro y administración del catálogo"
+                           styleClass="header-subtitle"/>
 
-                <Label text="Precio:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-                <TextField fx:id="txtPrecio"
-                           promptText="Precio de venta"
-                           GridPane.columnIndex="1"
-                           GridPane.rowIndex="3"/>
+                </VBox>
 
-                <Label text="Existencia:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
-                <TextField fx:id="txtExistencia"
-                           promptText="Existencia"
-                           GridPane.columnIndex="1"
-                           GridPane.rowIndex="4"/>
-
-                <Label text="Estado:" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
-                <CheckBox fx:id="chkActivo"
-                          text="Activo"
-                          GridPane.columnIndex="1"
-                          GridPane.rowIndex="5"/>
-
-                <Label text="Imagen:" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
-
-                <ImageView fx:id="imgProducto"
-                           fitHeight="150"
-                           fitWidth="150"
-                           preserveRatio="true"
-                           GridPane.columnIndex="2"
-                           GridPane.rowIndex="1"
-                           GridPane.rowSpan="4"/>
-
-                <Button fx:id="btnImagen"
-                        text="Seleccionar imagen"
-                        onAction="#seleccionarImagen"
-                        GridPane.columnIndex="2"
-                        GridPane.rowIndex="5"/>
-
-            </GridPane>
-
-            <HBox spacing="10">
-                <Button fx:id="btnGuardar"
-                        text="Guardar"
-                        onAction="#guardar"/>
-
-                <Button fx:id="btnCerrar"
-                        text="Cerrar"
-                        onAction="#cerrar"/>
             </HBox>
 
-            <TableView fx:id="tblProductos"
-                       prefHeight="300">
-
-                <columns>
-
-                    <TableColumn fx:id="colCodigo"
-                                 text="Código"
-                                 prefWidth="100"/>
-
-                    <TableColumn fx:id="colNombre"
-                                 text="Nombre"
-                                 prefWidth="180"/>
-
-                    <TableColumn fx:id="colCategoria"
-                                 text="Categoría"
-                                 prefWidth="150"/>
-
-                    <TableColumn fx:id="colPrecio"
-                                 text="Precio"
-                                 prefWidth="120"/>
-
-                    <TableColumn fx:id="colExistencia"
-                                 text="Existencia"
-                                 prefWidth="120"/>
-
-                    <TableColumn fx:id="colActivo"
-                                 text="Estado"
-                                 prefWidth="100"/>
-
-                </columns>
-
-            </TableView>
-
         </VBox>
+
+    </top>
+
+
+    <center>
+
+        <HBox styleClass="content-area"
+              spacing="20">
+
+
+            <!-- =================================================
+                 FORMULARIO
+                 ================================================= -->
+
+            <VBox styleClass="card"
+                  prefWidth="330"
+                  spacing="12">
+
+                <Label text="Información del producto"
+                       styleClass="card-title"/>
+
+                <Label text="Ingrese los datos correspondientes."
+                       styleClass="card-subtitle"/>
+
+
+                <Label text="Código"
+                       styleClass="label-form"/>
+
+                <TextField fx:id="txtCodigo"
+                           promptText="Ej. PROD-001">
+
+                    <tooltip>
+                        <Tooltip text="Código del producto&#10;Identificador del producto dentro del sistema."/>
+                    </tooltip>
+
+                </TextField>
+
+
+                <Label text="Nombre"
+                       styleClass="label-form"/>
+
+                <TextField fx:id="txtNombre"
+                           promptText="Nombre del producto">
+
+                    <tooltip>
+                        <Tooltip text="Nombre del producto&#10;Ingrese el nombre que tendrá el producto."/>
+                    </tooltip>
+
+                </TextField>
+
+
+                <Label text="Categoría"
+                       styleClass="label-form"/>
+
+                <ComboBox fx:id="cmbCategoria"
+                          maxWidth="Infinity"
+                          promptText="Seleccione una categoría">
+
+                    <tooltip>
+                        <Tooltip text="Categoría&#10;Seleccione la categoría a la que pertenece el producto."/>
+                    </tooltip>
+
+                </ComboBox>
+
+
+                <Label text="Precio de venta"
+                       styleClass="label-form"/>
+
+                <TextField fx:id="txtPrecio"
+                           promptText="Ej. 150.00">
+
+                    <tooltip>
+                        <Tooltip text="Precio de venta&#10;Ingrese un precio mayor que cero."/>
+                    </tooltip>
+
+                </TextField>
+
+
+                <Label text="Existencia"
+                       styleClass="label-form"/>
+
+                <TextField fx:id="txtExistencia"
+                           promptText="Ej. 25">
+
+                    <tooltip>
+                        <Tooltip text="Existencia&#10;Cantidad disponible del producto."/>
+                    </tooltip>
+
+                </TextField>
+
+
+                <CheckBox fx:id="chkActivo"
+                          text="Producto activo">
+
+                    <tooltip>
+                        <Tooltip text="Estado del producto&#10;Indica si el producto se encuentra activo."/>
+                    </tooltip>
+
+                </CheckBox>
+
+
+                <!-- Imagen -->
+
+                <VBox styleClass="image-container"
+                      alignment="CENTER"
+                      spacing="10"
+                      prefHeight="150">
+
+                    <ImageView fx:id="imgProducto"
+                               fitWidth="130"
+                               fitHeight="100"
+                               preserveRatio="true"/>
+
+                    <Label text="Vista previa de imagen"
+                           styleClass="image-placeholder"/>
+
+                </VBox>
+
+
+                <HBox spacing="10">
+
+                    <Button fx:id="btnImagen"
+                            text="Seleccionar imagen"
+                            styleClass="button-secondary"
+                            onAction="#seleccionarImagen">
+
+                        <tooltip>
+                            <Tooltip text="Seleccionar imagen&#10;Permite elegir una imagen para el producto."/>
+                        </tooltip>
+
+                    </Button>
+
+                </HBox>
+
+
+                <HBox spacing="10">
+
+                    <Button fx:id="btnGuardar"
+                            text="Guardar producto"
+                            styleClass="button-success"
+                            onAction="#guardar"
+                            maxWidth="Infinity"
+                            HBox.hgrow="ALWAYS">
+
+                        <tooltip>
+                            <Tooltip text="Guardar producto&#10;Registra el producto con los datos ingresados."/>
+                        </tooltip>
+
+                    </Button>
+
+
+                    <Button fx:id="btnCerrar"
+                            text="Cerrar"
+                            styleClass="button-danger"
+                            onAction="#cerrar">
+
+                        <tooltip>
+                            <Tooltip text="Cerrar ventana&#10;Cierra la gestión de productos."/>
+                        </tooltip>
+
+                    </Button>
+
+                </HBox>
+
+            </VBox>
+
+
+            <!-- =================================================
+                 TABLA
+                 ================================================= -->
+
+            <VBox styleClass="card"
+                  spacing="12"
+                  HBox.hgrow="ALWAYS">
+
+                <Label text="Productos registrados"
+                       styleClass="card-title"/>
+
+                <Label text="Listado de productos registrados durante la sesión."
+                       styleClass="card-subtitle"/>
+
+
+                <TableView fx:id="tblProductos"
+                           VBox.vgrow="ALWAYS"
+                           prefHeight="400">
+
+                    <columns>
+
+                        <TableColumn fx:id="colCodigo"
+                                     text="Código"
+                                     prefWidth="100"/>
+
+                        <TableColumn fx:id="colNombre"
+                                     text="Nombre"
+                                     prefWidth="170"/>
+
+                        <TableColumn fx:id="colCategoria"
+                                     text="Categoría"
+                                     prefWidth="110"/>
+
+                        <TableColumn fx:id="colPrecio"
+                                     text="Precio"
+                                     prefWidth="90"/>
+
+                        <TableColumn fx:id="colExistencia"
+                                     text="Existencia"
+                                     prefWidth="90"/>
+
+                        <TableColumn fx:id="colActivo"
+                                     text="Estado"
+                                     prefWidth="80"/>
+
+                    </columns>
+
+                </TableView>
+
+
+                <Label text="Los productos registrados aparecerán en esta tabla."
+                       styleClass="status-label"/>
+
+            </VBox>
+
+        </HBox>
+
     </center>
+
+
+    <bottom>
+
+        <HBox styleClass="status-bar"
+              alignment="CENTER_LEFT">
+
+            <Label text="Gestión de productos • Sistema de Facturación"
+                   styleClass="status-label"/>
+
+        </HBox>
+
+    </bottom>
 
 </BorderPane>
