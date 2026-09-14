@@ -5,8 +5,6 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.SeparatorMenuItem?>
-<?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -17,125 +15,127 @@
             fx:controller="ni.edu.uam.facturacion.controller.MenuPrincipalController"
             stylesheets="@../styles/app.css">
 
+    <!-- ENCABEZADO -->
+
     <top>
 
         <VBox>
 
-            <!-- ENCABEZADO -->
-
             <HBox styleClass="header"
-                  alignment="CENTER_LEFT"
-                  spacing="12">
+                  alignment="CENTER_LEFT">
 
                 <VBox spacing="2">
 
                     <Label text="EL GÜEGÜENSE"
-                           styleClass="header-title"/>
+                           styleClass="brand-title"/>
 
                     <Label text="Sistema de Facturación"
-                           styleClass="header-subtitle"/>
+                           styleClass="brand-subtitle"/>
 
                 </VBox>
 
             </HBox>
 
 
-            <!-- MENÚ PRINCIPAL -->
+            <!-- MENÚ -->
 
-            <MenuBar>
+            <MenuBar styleClass="main-menu">
 
                 <Menu text="Sistema">
 
-                    <MenuItem fx:id="mnuProductos"
-                              text="Gestión de productos"
+                    <MenuItem text="Productos"
                               onAction="#abrirProductos"/>
 
-                    <SeparatorMenuItem/>
-
-                    <MenuItem fx:id="mnuSalir"
-                              text="Salir"
+                    <MenuItem text="Salir"
                               onAction="#salir"/>
 
                 </Menu>
 
-
                 <Menu text="Ayuda">
 
-                    <MenuItem text="Acerca del sistema"/>
+                    <MenuItem text="Acerca del sistema"
+                              onAction="#acercaDe"/>
 
                 </Menu>
 
             </MenuBar>
 
 
-            <!-- BARRA DE HERRAMIENTAS -->
+            <!-- BARRA DE ACCIONES -->
 
-            <ToolBar>
+            <HBox styleClass="toolbar"
+                  spacing="10"
+                  alignment="CENTER_LEFT">
 
-                <Button fx:id="btnProductos"
-                        text="Productos"
+                <Button text="Productos"
                         styleClass="button-primary"
                         onAction="#abrirProductos">
 
                     <tooltip>
 
-                        <Tooltip text="Gestión de productos&#10;Permite registrar y consultar productos."/>
+                        <Tooltip text="Gestión de productos&#10;Administra el catálogo de productos del sistema."/>
 
                     </tooltip>
 
                 </Button>
 
 
-                <Button fx:id="btnSalir"
-                        text="Salir"
+                <Button text="Salir"
                         styleClass="button-danger"
                         onAction="#salir">
 
                     <tooltip>
 
-                        <Tooltip text="Salir del sistema&#10;Cierra la aplicación."/>
+                        <Tooltip text="Salir&#10;Cierra el sistema de facturación."/>
 
                     </tooltip>
 
                 </Button>
 
-            </ToolBar>
+            </HBox>
 
         </VBox>
 
     </top>
 
 
-    <!-- CONTENIDO CENTRAL -->
+    <!-- PANEL PRINCIPAL -->
 
     <center>
 
-        <VBox styleClass="content-area"
-              alignment="TOP_LEFT"
-              spacing="22">
+        <VBox styleClass="dashboard"
+              spacing="20">
 
-            <Label text="Panel principal"
-                   styleClass="page-title"/>
+            <VBox spacing="4">
 
-            <Label text="Seleccione una opción para comenzar a trabajar."
-                   styleClass="page-description"/>
+                <Label text="Panel principal"
+                       styleClass="dashboard-title"/>
+
+                <Label text="Seleccione una opción para comenzar a trabajar."
+                       styleClass="dashboard-subtitle"/>
+
+            </VBox>
 
 
-            <HBox spacing="18">
+            <!-- TARJETAS -->
+
+            <HBox spacing="18"
+                  VBox.vgrow="ALWAYS">
 
 
-                <!-- TARJETA PRODUCTOS -->
+                <!-- PRODUCTOS -->
 
-                <VBox styleClass="card"
-                      prefWidth="260"
-                      spacing="10">
+                <VBox styleClass="dashboard-card"
+                      spacing="10"
+                      HBox.hgrow="ALWAYS">
 
                     <Label text="Productos"
-                           styleClass="card-title"/>
+                           styleClass="dashboard-card-title"/>
 
                     <Label text="Administre el catálogo de productos, precios, existencia e imágenes."
-                           styleClass="card-subtitle"
-                           wrapText="true"/>
+                           wrapText="true"
+                           styleClass="dashboard-card-text"
+                           VBox.vgrow="ALWAYS"/>
 
                     <Button text="Abrir productos"
                             styleClass="button-primary"
@@ -143,7 +143,7 @@
 
                         <tooltip>
 
-                            <Tooltip text="Abrir gestión de productos"/>
+                            <Tooltip text="Abrir gestión de productos&#10;Permite registrar y consultar productos."/>
 
                         </tooltip>
 
@@ -152,34 +152,36 @@
                 </VBox>
 
 
-                <!-- TARJETA SISTEMA -->
+                <!-- SISTEMA -->
 
-                <VBox styleClass="card"
-                      prefWidth="260"
-                      spacing="10">
+                <VBox styleClass="dashboard-card"
+                      spacing="10"
+                      HBox.hgrow="ALWAYS">
 
                     <Label text="Sistema"
-                           styleClass="card-title"/>
+                           styleClass="dashboard-card-title"/>
 
                     <Label text="Herramientas principales del sistema de facturación."
-                           styleClass="card-subtitle"
-                           wrapText="true"/>
+                           wrapText="true"
+                           styleClass="dashboard-card-text"
+                           VBox.vgrow="ALWAYS"/>
 
                 </VBox>
 
 
-                <!-- TARJETA INFORMACIÓN -->
+                <!-- INFORMACIÓN -->
 
-                <VBox styleClass="card"
-                      prefWidth="260"
-                      spacing="10">
+                <VBox styleClass="dashboard-card"
+                      spacing="10"
+                      HBox.hgrow="ALWAYS">
 
                     <Label text="Información"
-                           styleClass="card-title"/>
+                           styleClass="dashboard-card-title"/>
 
                     <Label text="Sistema desarrollado para la gestión y control de productos."
-                           styleClass="card-subtitle"
-                           wrapText="true"/>
+                           wrapText="true"
+                           styleClass="dashboard-card-text"
+                           VBox.vgrow="ALWAYS"/>
 
                 </VBox>
 
@@ -190,7 +192,7 @@
     </center>
 
 
-    <!-- BARRA INFERIOR -->
+    <!-- PIE -->
 
     <bottom>
 
