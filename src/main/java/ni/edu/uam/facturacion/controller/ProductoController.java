@@ -7,6 +7,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -20,6 +21,8 @@ import ni.edu.uam.facturacion.mode1.Producto;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 public class ProductoController {
 
@@ -34,6 +37,9 @@ public class ProductoController {
 
     @FXML
     private TextField txtExistencia;
+
+    @FXML
+    private TextField txtBuscar;
 
     @FXML
     private ComboBox<Categoria> cmbCategoria;
@@ -65,15 +71,37 @@ public class ProductoController {
     @FXML
     private TableColumn<Producto, Boolean> colActivo;
 
+    @FXML
+    private Label lblContador;
 
     private final ObservableList<Producto> productos =
             FXCollections.observableArrayList();
 
+    private final ObservableList<Producto> productosFiltrados =
+            FXCollections.observableArrayList();
+
     private String rutaImagen;
+
+    private final NumberFormat formatoMoneda =
+            NumberFormat.getCurrencyInstance(new Locale("es", "NI"));
 
 
     @FXML
     private void initialize() {
+
+        cargarCategorias();
+
+        configurarTabla();
+
+        configurarBusqueda();
+
+        chkActivo.setSelected(true);
+
+        actualizarContador();
+    }
+
+
+    private void cargarCategorias() {
 
         cmbCategoria.setItems(
                 FXCollections.observableArrayList(
@@ -82,11 +110,12 @@ public class ProductoController {
                         new Categoria(3, "Limpieza", true)
                 )
         );
+    }
 
-        tblProductos.setItems(productos);
 
-        chkActivo.setSelected(true);
+    private void configurarTabla() {
 
+        tblProductos.setItems(productosFiltrados);
 
         colCodigo.setCellValueFactory(
                 new javafx.scene.control.cell.PropertyValueFactory<>("codigo")
@@ -113,6 +142,54 @@ public class ProductoController {
         );
 
 
+        // Código
+        colCodigo.setStyle("-fx-alignment: CENTER-LEFT;");
+
+
+        // Nombre
+        colNombre.setStyle("-fx-alignment: CENTER-LEFT;");
+
+
+        // Categoría
+        colCategoria.setStyle("-fx-alignment: CENTER-LEFT;");
+
+
+        // Precio
+        colPrecio.setStyle("-fx-alignment: CENTER-RIGHT;");
+
+        colPrecio.setCellFactory(column ->
+                new TableCell<>() {
+
+                    @Override
+                    protected void updateItem(
+                            BigDecimal precio,
+                            boolean empty
+                    ) {
+
+                        super.updateItem(precio, empty);
+
+                        if (empty || precio == null) {
+
+                            setText(null);
+
+                        } else {
+
+                            setText(
+                                    formatoMoneda.format(precio)
+                            );
+                        }
+                    }
+                }
+        );
+
+
+        // Existencia
+        colExistencia.setStyle("-fx-alignment: CENTER;");
+
+
+        // Estado
+        colActivo.setStyle("-fx-alignment: CENTER;");
+
         colActivo.setCellFactory(column ->
                 new TableCell<>() {
 
@@ -125,22 +202,156 @@ public class ProductoController {
                         super.updateItem(activo, empty);
 
                         if (empty || activo == null) {
+
                             setText(null);
+
+                            setStyle("");
+
+                        } else if (activo) {
+
+                            setText("● Activo");
+
+                            setStyle(
+                                    "-fx-text-fill: #15803d;"
+                                            + "-fx-font-weight: bold;"
+                            );
+
                         } else {
-                            setText(activo ? "Activo" : "Inactivo");
+
+                            setText("● Inactivo");
+
+                            setStyle(
+                                    "-fx-text-fill: #dc2626;"
+                                            + "-fx-font-weight: bold;"
+                            );
                         }
+                    }
+                }
+        );
+
+
+        // Ajuste automático de columnas
+        tblProductos.widthProperty().addListener(
+                (observable, anterior, nuevo) -> {
+
+                    double ancho =
+                            nuevo.doubleValue();
+
+                    if (ancho > 0) {
+
+                        colCodigo.setPrefWidth(ancho * 0.13);
+                        colNombre.setPrefWidth(ancho * 0.25);
+                        colCategoria.setPrefWidth(ancho * 0.18);
+                        colPrecio.setPrefWidth(ancho * 0.14);
+                        colExistencia.setPrefWidth(ancho * 0.14);
+                        colActivo.setPrefWidth(ancho * 0.16);
                     }
                 }
         );
     }
 
 
+    private void configurarBusqueda() {
+
+        txtBuscar.textProperty().addListener(
+                (observable, anterior, nuevoTexto) ->
+                        filtrarProductos(nuevoTexto)
+        );
+    }
+
+
+    private void filtrarProductos(String texto) {
+
+        String busqueda =
+                texto == null
+                        ? ""
+                        : texto.trim().toLowerCase();
+
+
+        productosFiltrados.clear();
+
+
+        if (busqueda.isBlank()) {
+
+            productosFiltrados.addAll(productos);
+
+        } else {
+
+            for (Producto producto : productos) {
+
+                String codigo =
+                        producto.getCodigo() == null
+                                ? ""
+                                : producto.getCodigo()
+                                .toLowerCase();
+
+                String nombre =
+                        producto.getNombre() == null
+                                ? ""
+                                : producto.getNombre()
+                                .toLowerCase();
+
+                String categoria =
+                        producto.getCategoria() == null
+                                ? ""
+                                : producto.getCategoria()
+                                .getNombre()
+                                .toLowerCase();
+
+
+                if (codigo.contains(busqueda)
+                        || nombre.contains(busqueda)
+                        || categoria.contains(busqueda)) {
+
+                    productosFiltrados.add(producto);
+                }
+            }
+        }
+
+        actualizarContador();
+    }
+
+
+    @FXML
+    private void limpiarBusqueda() {
+
+        txtBuscar.clear();
+
+        productosFiltrados.setAll(productos);
+
+        actualizarContador();
+
+        txtBuscar.requestFocus();
+    }
+
+
+    private void actualizarContador() {
+
+        if (lblContador != null) {
+
+            int cantidad =
+                    productosFiltrados.size();
+
+            lblContador.setText(
+                    "Mostrando "
+                            + cantidad
+                            + (cantidad == 1
+                            ? " producto"
+                            : " productos")
+            );
+        }
+    }
+
+
     @FXML
     private void seleccionarImagen() {
 
-        FileChooser chooser = new FileChooser();
+        FileChooser chooser =
+                new FileChooser();
 
-        chooser.setTitle("Seleccionar imagen del producto");
+        chooser.setTitle(
+                "Seleccionar imagen del producto"
+        );
 
         chooser.getExtensionFilters().add(
                 new FileChooser.ExtensionFilter(
@@ -151,13 +362,18 @@ public class ProductoController {
                 )
         );
 
-        File archivo = chooser.showOpenDialog(
-                txtCodigo.getScene().getWindow()
-        );
+        File archivo =
+                chooser.showOpenDialog(
+                        txtCodigo
+                                .getScene()
+                                .getWindow()
+                );
+
 
         if (archivo != null) {
 
-            rutaImagen = archivo.toURI().toString();
+            rutaImagen =
+                    archivo.toURI().toString();
 
             imgProducto.setImage(
                     new Image(rutaImagen)
@@ -188,12 +404,16 @@ public class ProductoController {
 
             BigDecimal precio =
                     new BigDecimal(
-                            txtPrecio.getText().trim()
+                            txtPrecio
+                                    .getText()
+                                    .trim()
                     );
 
             int existencia =
                     Integer.parseInt(
-                            txtExistencia.getText().trim()
+                            txtExistencia
+                                    .getText()
+                                    .trim()
                     );
 
 
@@ -209,19 +429,36 @@ public class ProductoController {
             }
 
 
-            Producto producto = new Producto(
-                    null,
-                    txtCodigo.getText().trim(),
-                    txtNombre.getText().trim(),
-                    cmbCategoria.getValue(),
-                    precio,
-                    existencia,
-                    rutaImagen,
-                    chkActivo.isSelected()
-            );
+            Producto producto =
+                    new Producto(
+                            null,
+                            txtCodigo
+                                    .getText()
+                                    .trim(),
+
+                            txtNombre
+                                    .getText()
+                                    .trim(),
+
+                            cmbCategoria
+                                    .getValue(),
+
+                            precio,
+
+                            existencia,
+
+                            rutaImagen,
+
+                            chkActivo
+                                    .isSelected()
+                    );
 
 
             productos.add(producto);
+
+            filtrarProductos(
+                    txtBuscar.getText()
+            );
 
 
             mensaje(
