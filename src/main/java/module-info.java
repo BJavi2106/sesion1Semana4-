@@ -3,6 +3,7 @@ module com.tuempresa.sesion1Semana4 {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.prefs;
+    requires java.sql;
 
     opens ni.edu.uam.facturacion.controller
             to javafx.fxml;
