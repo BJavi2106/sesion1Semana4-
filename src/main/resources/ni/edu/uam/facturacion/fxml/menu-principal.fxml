@@ -16,46 +16,25 @@
             stylesheets="@../styles/app.css">
 
     <top>
-
         <VBox>
-
-            <HBox styleClass="header"
-                  alignment="CENTER_LEFT">
-
+            <HBox styleClass="header" alignment="CENTER_LEFT">
                 <VBox spacing="2">
-
-                    <Label text="EL GÜEGÜENSE"
-                           styleClass="brand-title"/>
-
-                    <Label text="Sistema de Facturación"
-                           styleClass="brand-subtitle"/>
-
+                    <Label text="EL GÜEGÜENSE" styleClass="brand-title"/>
+                    <Label text="Sistema de Facturación" styleClass="brand-subtitle"/>
                 </VBox>
-
             </HBox>
 
             <MenuBar styleClass="main-menu">
-
                 <Menu text="Sistema">
-
-                    <MenuItem text="Productos"
-                              onAction="#abrirProductos"/>
-
-                    <MenuItem text="Configuración"
-                              onAction="#abrirConfiguracion"/>
-
-                    <MenuItem text="Salir"
-                              onAction="#salir"/>
-
+                    <MenuItem text="Productos" onAction="#abrirProductos"/>
+                    <MenuItem text="Categorías" onAction="#abrirCategorias"/>
+                    <MenuItem text="Configuración" onAction="#abrirConfiguracion"/>
+                    <MenuItem text="Salir" onAction="#salir"/>
                 </Menu>
 
                 <Menu text="Ayuda">
-
-                    <MenuItem text="Acerca del sistema"
-                              onAction="#acercaDe"/>
-
+                    <MenuItem text="Acerca del sistema" onAction="#acercaDe"/>
                 </Menu>
-
             </MenuBar>
 
             <HBox styleClass="toolbar"
@@ -65,145 +44,101 @@
                 <Button text="Productos"
                         styleClass="button-primary"
                         onAction="#abrirProductos">
-
                     <tooltip>
                         <Tooltip text="Gestión de productos&#10;Administra el catálogo de productos del sistema."/>
                     </tooltip>
+                </Button>
 
+                <Button text="Categorías"
+                        styleClass="button-secondary"
+                        onAction="#abrirCategorias">
+                    <tooltip>
+                        <Tooltip text="Gestión de categorías&#10;Administra las categorías del catálogo."/>
+                    </tooltip>
                 </Button>
 
                 <Button text="Configuración"
                         styleClass="button-secondary"
                         onAction="#abrirConfiguracion">
-
                     <tooltip>
                         <Tooltip text="Configuración&#10;Personaliza la apariencia y preferencias del sistema."/>
                     </tooltip>
-
                 </Button>
 
                 <Button text="Salir"
                         styleClass="button-danger"
                         onAction="#salir">
-
                     <tooltip>
                         <Tooltip text="Salir&#10;Cierra el sistema de facturación."/>
                     </tooltip>
-
                 </Button>
-
             </HBox>
-
         </VBox>
-
     </top>
 
     <center>
-
         <VBox styleClass="dashboard"
               spacing="20">
 
             <VBox spacing="4">
-
                 <Label text="Panel principal"
                        styleClass="dashboard-title"/>
-
                 <Label text="Seleccione una opción para comenzar a trabajar."
                        styleClass="dashboard-subtitle"/>
-
             </VBox>
 
-            <HBox spacing="18"
-                  VBox.vgrow="ALWAYS">
+            <HBox spacing="18" VBox.vgrow="ALWAYS">
 
                 <VBox styleClass="dashboard-card"
                       spacing="10"
                       HBox.hgrow="ALWAYS">
-
                     <Label text="Productos"
                            styleClass="dashboard-card-title"/>
-
                     <Label text="Administre el catálogo de productos, precios, existencia e imágenes."
                            wrapText="true"
                            styleClass="dashboard-card-text"
                            VBox.vgrow="ALWAYS"/>
-
                     <Button text="Abrir productos"
                             styleClass="button-primary"
-                            onAction="#abrirProductos">
-
-                        <tooltip>
-                            <Tooltip text="Abrir gestión de productos&#10;Permite registrar y consultar productos."/>
-                        </tooltip>
-
-                    </Button>
-
+                            onAction="#abrirProductos"/>
                 </VBox>
 
                 <VBox styleClass="dashboard-card"
                       spacing="10"
                       HBox.hgrow="ALWAYS">
+                    <Label text="Categorías"
+                           styleClass="dashboard-card-title"/>
+                    <Label text="Registre, actualice y controle las categorías utilizadas por los productos."
+                           wrapText="true"
+                           styleClass="dashboard-card-text"
+                           VBox.vgrow="ALWAYS"/>
+                    <Button text="Abrir categorías"
+                            styleClass="button-secondary"
+                            onAction="#abrirCategorias"/>
+                </VBox>
 
+                <VBox styleClass="dashboard-card"
+                      spacing="10"
+                      HBox.hgrow="ALWAYS">
                     <Label text="Sistema"
                            styleClass="dashboard-card-title"/>
-
-                    <Label text="Herramientas principales del sistema de facturación."
+                    <Label text="Herramientas principales y configuración del sistema de facturación."
                            wrapText="true"
                            styleClass="dashboard-card-text"
                            VBox.vgrow="ALWAYS"/>
-
                     <Button text="Configuración"
                             styleClass="button-secondary"
-                            onAction="#abrirConfiguracion">
-
-                        <tooltip>
-                            <Tooltip text="Abrir configuración&#10;Personaliza las preferencias del sistema."/>
-                        </tooltip>
-
-                    </Button>
-
+                            onAction="#abrirConfiguracion"/>
                 </VBox>
-
-                <VBox styleClass="dashboard-card"
-                      spacing="10"
-                      HBox.hgrow="ALWAYS">
-
-                    <Label text="Información"
-                           styleClass="dashboard-card-title"/>
-
-                    <Label text="Sistema desarrollado para la gestión y control de productos."
-                           wrapText="true"
-                           styleClass="dashboard-card-text"
-                           VBox.vgrow="ALWAYS"/>
-
-                    <Button text="Acerca del sistema"
-                            styleClass="button-secondary"
-                            onAction="#acercaDe">
-
-                        <tooltip>
-                            <Tooltip text="Información del sistema&#10;Muestra información general del proyecto."/>
-                        </tooltip>
-
-                    </Button>
-
-                </VBox>
-
             </HBox>
-
         </VBox>
-
     </center>
 
     <bottom>
-
         <HBox styleClass="status-bar"
               alignment="CENTER_LEFT">
-
             <Label text="Sistema de Facturación • UAM"
                    styleClass="status-label"/>
-
         </HBox>
-
     </bottom>
-
 </BorderPane>
