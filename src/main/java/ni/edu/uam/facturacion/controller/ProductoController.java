@@ -761,120 +761,34 @@ public class ProductoController {
     @FXML
     private void guardar() {
 
-        String codigo =
-                txtCodigo
-                        .getText()
-                        .trim();
-
-        String nombre =
-                txtNombre
-                        .getText()
-                        .trim();
-
-
-        if (codigo.isBlank()
-                || nombre.isBlank()
-                || cmbCategoria.getValue() == null
-                || txtPrecio.getText().isBlank()
-                || txtExistencia.getText().isBlank()) {
-
-            mostrarMensaje(
-                    Alert.AlertType.WARNING,
-                    "Datos incompletos",
-                    "Complete todos los campos obligatorios."
-            );
-
-            return;
-        }
-
-
         try {
 
-            BigDecimal precio =
-                    new BigDecimal(
-                            txtPrecio
-                                    .getText()
-                                    .trim()
-                    );
-
-
-            int existencia =
-                    Integer.parseInt(
-                            txtExistencia
-                                    .getText()
-                                    .trim()
-                    );
-
-
-            if (precio.signum() <= 0) {
-
-                mostrarMensaje(
-                        Alert.AlertType.WARNING,
-                        "Precio inválido",
-                        "El precio debe ser mayor que cero."
-                );
-
-                return;
-            }
-
-
-            if (existencia < 0) {
-
-                mostrarMensaje(
-                        Alert.AlertType.WARNING,
-                        "Existencia inválida",
-                        "La existencia no puede ser negativa."
-                );
-
-                return;
-            }
-
+            Producto producto = obtenerProductoFormulario();
 
             Integer idExcluir =
                     productoEnEdicion == null
                             ? null
                             : productoEnEdicion.getId();
 
-
-            if (
-                    productoDAO.codigoExiste(
-                            codigo,
-                            idExcluir
-                    )
-            ) {
+            if (productoDAO.codigoExiste(
+                    producto.getCodigo(),
+                    idExcluir
+            )) {
 
                 mostrarMensaje(
                         Alert.AlertType.WARNING,
                         "Código duplicado",
                         "Ya existe un producto con el código: "
-                                + codigo
+                                + producto.getCodigo()
                 );
 
                 txtCodigo.requestFocus();
-
                 return;
             }
 
-
             if (productoEnEdicion == null) {
 
-                Producto nuevoProducto =
-                        new Producto(
-                                null,
-                                codigo,
-                                nombre,
-                                cmbCategoria.getValue(),
-                                precio,
-                                existencia,
-                                rutaImagen,
-                                chkActivo.isSelected()
-                        );
-
-
-                productoDAO.insertar(
-                        nuevoProducto
-                );
-
+                productoDAO.insertar(producto);
 
                 mostrarMensaje(
                         Alert.AlertType.INFORMATION,
@@ -884,39 +798,9 @@ public class ProductoController {
 
             } else {
 
-                productoEnEdicion.setCodigo(
-                        codigo
-                );
+                producto.setId(productoEnEdicion.getId());
 
-                productoEnEdicion.setNombre(
-                        nombre
-                );
-
-                productoEnEdicion.setCategoria(
-                        cmbCategoria.getValue()
-                );
-
-                productoEnEdicion.setPrecioVenta(
-                        precio
-                );
-
-                productoEnEdicion.setExistencia(
-                        existencia
-                );
-
-                productoEnEdicion.setRutaImagen(
-                        rutaImagen
-                );
-
-                productoEnEdicion.setActivo(
-                        chkActivo.isSelected()
-                );
-
-
-                productoDAO.actualizar(
-                        productoEnEdicion
-                );
-
+                productoDAO.actualizar(producto);
 
                 mostrarMensaje(
                         Alert.AlertType.INFORMATION,
@@ -924,7 +808,6 @@ public class ProductoController {
                         "Los cambios se guardaron correctamente en PostgreSQL."
                 );
             }
-
 
             cargarProductosDesdeBD();
 
@@ -936,24 +819,119 @@ public class ProductoController {
 
             txtCodigo.requestFocus();
 
+        } catch (IllegalArgumentException e) {
+
+            mostrarMensaje(
+                    Alert.AlertType.WARNING,
+                    "Datos inválidos",
+                    e.getMessage()
+            );
+
+        } catch (java.sql.SQLException e) {
+
+            mostrarMensaje(
+                    Alert.AlertType.ERROR,
+                    "Error de base de datos",
+                    "No fue posible guardar el producto. "
+                            + "Verifique la conexión con PostgreSQL."
+            );
+
+            System.err.println(e.getMessage());
+        }
+    }
+
+
+    private Producto obtenerProductoFormulario() {
+
+        String codigo =
+                txtCodigo.getText().trim();
+
+        String nombre =
+                txtNombre.getText().trim();
+
+        if (codigo.isEmpty()) {
+
+            throw new IllegalArgumentException(
+                    "El código es obligatorio."
+            );
+        }
+
+        if (nombre.isEmpty()) {
+
+            throw new IllegalArgumentException(
+                    "El nombre es obligatorio."
+            );
+        }
+
+        Categoria categoria =
+                cmbCategoria.getSelectionModel()
+                        .getSelectedItem();
+
+        if (categoria == null) {
+
+            throw new IllegalArgumentException(
+                    "Debe seleccionar una categoría."
+            );
+        }
+
+        BigDecimal precio;
+
+        try {
+
+            precio =
+                    new BigDecimal(
+                            txtPrecio.getText().trim()
+                    );
 
         } catch (NumberFormatException e) {
 
-            mostrarMensaje(
-                    Alert.AlertType.ERROR,
-                    "Datos inválidos",
-                    "El precio o la existencia no tienen un formato válido."
-            );
-
-        } catch (Exception e) {
-
-            mostrarMensaje(
-                    Alert.AlertType.ERROR,
-                    "Error al guardar",
-                    "No fue posible guardar el producto en PostgreSQL.\n\n"
-                            + e.getMessage()
+            throw new IllegalArgumentException(
+                    "El precio debe ser un valor numérico."
             );
         }
+
+        if (precio.compareTo(BigDecimal.ZERO) <= 0) {
+
+            throw new IllegalArgumentException(
+                    "El precio de venta debe ser mayor que cero."
+            );
+        }
+
+        int existencia;
+
+        try {
+
+            existencia =
+                    Integer.parseInt(
+                            txtExistencia.getText().trim()
+                    );
+
+        } catch (NumberFormatException e) {
+
+            throw new IllegalArgumentException(
+                    "La existencia debe ser un número entero."
+            );
+        }
+
+        if (existencia < 0) {
+
+            throw new IllegalArgumentException(
+                    "La existencia no puede ser negativa."
+            );
+        }
+
+        return new Producto(
+                productoEnEdicion == null
+                        ? null
+                        : productoEnEdicion.getId(),
+                codigo,
+                nombre,
+                categoria,
+                precio,
+                existencia,
+                rutaImagen,
+                chkActivo.isSelected()
+        );
     }
 
 
