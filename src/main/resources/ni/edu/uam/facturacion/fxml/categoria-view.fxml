@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ni.edu.uam.facturacion.controller.CategoriaController"
+            stylesheets="@../styles/app.css">
+
+    <top>
+        <VBox styleClass="header" spacing="3">
+            <Label text="Gestión de categorías" styleClass="header-title"/>
+            <Label text="Registro y administración de categorías."
+                   styleClass="header-subtitle"/>
+        </VBox>
+    </top>
+
+    <center>
+        <HBox styleClass="content-area" spacing="18">
+
+            <VBox styleClass="card product-form"
+                  prefWidth="330"
+                  minWidth="300"
+                  maxWidth="350"
+                  spacing="8">
+
+                <Label text="Información de la categoría"
+                       styleClass="card-title"/>
+                <Label text="Ingrese los datos correspondientes."
+                       styleClass="card-subtitle"/>
+
+                <Label text="Nombre" styleClass="label-form"/>
+
+                <TextField fx:id="txtNombre"
+                           prefHeight="32"
+                           promptText="Nombre de la categoría"/>
+
+                <CheckBox fx:id="chkActiva"
+                          text="Categoría activa"
+                          selected="true"/>
+
+                <HBox spacing="8">
+                    <Button fx:id="btnGuardar"
+                            text="Guardar categoría"
+                            styleClass="button-primary"
+                            onAction="#guardar"
+                            maxWidth="Infinity"
+                            HBox.hgrow="ALWAYS"/>
+
+                    <Button fx:id="btnCancelarEdicion"
+                            text="Cancelar"
+                            styleClass="button-secondary"
+                            onAction="#cancelarEdicion"
+                            visible="false"
+                            managed="false"/>
+                </HBox>
+
+                <Label text="La categoría no podrá eliminarse si tiene productos asociados."
+                       wrapText="true"
+                       styleClass="card-subtitle"/>
+            </VBox>
+
+            <VBox styleClass="card"
+                  spacing="10"
+                  HBox.hgrow="ALWAYS">
+
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <VBox spacing="2" HBox.hgrow="ALWAYS">
+                        <Label text="Categorías registradas"
+                               styleClass="card-title"/>
+                        <Label fx:id="lblContador"
+                               text="Mostrando 0 categorías"
+                               styleClass="card-subtitle"/>
+                    </VBox>
+
+                    <Button fx:id="btnEditar"
+                            text="Editar"
+                            styleClass="button-secondary"
+                            onAction="#editarCategoria"
+                            disable="true">
+                        <tooltip>
+                            <Tooltip text="Actualizar la categoría seleccionada."/>
+                        </tooltip>
+                    </Button>
+
+                    <Button fx:id="btnEliminar"
+                            text="Eliminar"
+                            styleClass="button-danger"
+                            onAction="#eliminarCategoria"
+                            disable="true">
+                        <tooltip>
+                            <Tooltip text="Eliminar la categoría seleccionada."/>
+                        </tooltip>
+                    </Button>
+                </HBox>
+
+                <TableView fx:id="tblCategorias"
+                           VBox.vgrow="ALWAYS"
+                           prefHeight="420">
+                    <columns>
+                        <TableColumn fx:id="colId"
+                                     text="ID"
+                                     prefWidth="70"/>
+                        <TableColumn fx:id="colNombre"
+                                     text="Nombre"
+                                     prefWidth="260"/>
+                        <TableColumn fx:id="colActiva"
+                                     text="Activa"
+                                     prefWidth="110"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </HBox>
+    </center>
+</BorderPane>
