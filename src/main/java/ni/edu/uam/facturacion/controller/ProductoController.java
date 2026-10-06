@@ -181,8 +181,8 @@ public class ProductoController {
             mostrarMensaje(
                     Alert.AlertType.ERROR,
                     "Error de conexión",
-                    "No fue posible cargar los datos desde PostgreSQL.\n\n"
-                            + e.getMessage()
+                    "No fue posible cargar los datos desde la base de datos. "
+                            + "Verifique que PostgreSQL esté disponible."
             );
         }
     }
