@@ -46,9 +46,9 @@ public class CategoriaController {
 
         tblCategorias.getSelectionModel().selectedItemProperty()
                 .addListener((obs, anterior, actual) -> {
-                    boolean sinSeleccion = actual == null;
-                    btnEditar.setDisable(sinSeleccion);
-                    btnEliminar.setDisable(sinSeleccion);
+                    boolean haySeleccion = actual != null;
+                    btnEditar.setDisable(!haySeleccion);
+                    btnEliminar.setDisable(!haySeleccion);
                 });
 
         txtNombre.textProperty().addListener((obs, anterior, nuevo) -> {
@@ -76,8 +76,23 @@ public class CategoriaController {
                     "Error de base de datos",
                     "No fue posible cargar las categorías."
             );
-            System.err.println(e.getMessage());
         }
+    }
+
+    private Categoria obtenerCategoriaFormulario() {
+        String nombre = txtNombre.getText().trim();
+
+        if (nombre.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "El nombre de la categoría es obligatorio."
+            );
+        }
+
+        return new Categoria(
+                null,
+                nombre,
+                chkActiva.isSelected()
+        );
     }
 
     @FXML
@@ -104,6 +119,7 @@ public class CategoriaController {
 
             if (categoriaEnEdicion == null) {
                 categoriaDAO.insertar(categoria);
+
                 mostrarMensaje(
                         Alert.AlertType.INFORMATION,
                         "Categoría registrada",
@@ -111,7 +127,19 @@ public class CategoriaController {
                 );
             } else {
                 categoria.setId(categoriaEnEdicion.getId());
-                categoriaDAO.actualizar(categoria);
+
+                boolean actualizada =
+                        categoriaDAO.actualizar(categoria);
+
+                if (!actualizada) {
+                    mostrarMensaje(
+                            Alert.AlertType.WARNING,
+                            "Categoría no actualizada",
+                            "No fue posible actualizar la categoría."
+                    );
+                    return;
+                }
+
                 mostrarMensaje(
                         Alert.AlertType.INFORMATION,
                         "Categoría actualizada",
@@ -136,24 +164,7 @@ public class CategoriaController {
                     "Error de base de datos",
                     "No fue posible completar la operación."
             );
-            System.err.println(e.getMessage());
         }
-    }
-
-    private Categoria obtenerCategoriaFormulario() {
-        String nombre = txtNombre.getText().trim();
-
-        if (nombre.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "El nombre de la categoría es obligatorio."
-            );
-        }
-
-        return new Categoria(
-                null,
-                nombre,
-                chkActiva.isSelected()
-        );
     }
 
     @FXML
@@ -171,12 +182,14 @@ public class CategoriaController {
         }
 
         categoriaEnEdicion = seleccionada;
+
         txtNombre.setText(seleccionada.getNombre());
         chkActiva.setSelected(seleccionada.isActiva());
 
         btnGuardar.setText("Guardar cambios");
         btnCancelarEdicion.setVisible(true);
         btnCancelarEdicion.setManaged(true);
+
         txtNombre.requestFocus();
     }
 
@@ -201,6 +214,25 @@ public class CategoriaController {
             return;
         }
 
+        Alert confirmacion = new Alert(
+                Alert.AlertType.CONFIRMATION,
+                "¿Está seguro de eliminar la categoría?\n\n"
+                        + seleccionada.getNombre(),
+                ButtonType.OK,
+                ButtonType.CANCEL
+        );
+
+        confirmacion.setTitle("Confirmar eliminación");
+        confirmacion.setHeaderText("Eliminar categoría");
+
+        Optional<ButtonType> resultado =
+                confirmacion.showAndWait();
+
+        if (resultado.isEmpty()
+                || resultado.get() != ButtonType.OK) {
+            return;
+        }
+
         try {
             if (categoriaDAO.tieneProductos(seleccionada.getId())) {
                 mostrarMensaje(
@@ -211,41 +243,33 @@ public class CategoriaController {
                 return;
             }
 
-            Alert confirmacion = new Alert(
-                    Alert.AlertType.CONFIRMATION,
-                    "¿Está seguro de eliminar la categoría?\n\n"
-                            + seleccionada.getNombre(),
-                    ButtonType.OK,
-                    ButtonType.CANCEL
-            );
+            boolean eliminada =
+                    categoriaDAO.eliminar(seleccionada.getId());
 
-            confirmacion.setTitle("Confirmar eliminación");
-            confirmacion.setHeaderText("Eliminar categoría");
-
-            Optional<ButtonType> resultado =
-                    confirmacion.showAndWait();
-
-            if (resultado.isPresent()
-                    && resultado.get() == ButtonType.OK) {
-
-                categoriaDAO.eliminar(seleccionada.getId());
-                cargarCategoriasDesdeBD();
-                limpiarFormulario();
-
+            if (!eliminada) {
                 mostrarMensaje(
-                        Alert.AlertType.INFORMATION,
-                        "Categoría eliminada",
-                        "La categoría fue eliminada correctamente."
+                        Alert.AlertType.WARNING,
+                        "Categoría no eliminada",
+                        "No fue posible eliminar la categoría."
                 );
+                return;
             }
+
+            cargarCategoriasDesdeBD();
+            limpiarFormulario();
+
+            mostrarMensaje(
+                    Alert.AlertType.INFORMATION,
+                    "Categoría eliminada",
+                    "La categoría fue eliminada correctamente."
+            );
 
         } catch (SQLException e) {
             mostrarMensaje(
                     Alert.AlertType.ERROR,
                     "Error de base de datos",
-                    "No fue posible eliminar la categoría."
+                    "No fue posible completar la operación."
             );
-            System.err.println(e.getMessage());
         }
     }
 
@@ -265,9 +289,13 @@ public class CategoriaController {
 
     private void actualizarContador() {
         int cantidad = categorias.size();
+
         lblContador.setText(
-                "Mostrando " + cantidad
-                        + (cantidad == 1 ? " categoría" : " categorías")
+                "Mostrando "
+                        + cantidad
+                        + (cantidad == 1
+                        ? " categoría"
+                        : " categorías")
         );
     }
 
@@ -276,20 +304,14 @@ public class CategoriaController {
             String titulo,
             String mensaje
     ) {
-        Alert alerta = new Alert(tipo, mensaje, ButtonType.OK);
+        Alert alerta = new Alert(
+                tipo,
+                mensaje,
+                ButtonType.OK
+        );
+
         alerta.setTitle("Sistema de Facturación");
         alerta.setHeaderText(titulo);
-        alerta.getDialogPane().getStyleClass().add("app-alert");
-
-        switch (tipo) {
-            case ERROR -> alerta.getDialogPane()
-                    .getStyleClass().add("app-alert-error");
-            case WARNING -> alerta.getDialogPane()
-                    .getStyleClass().add("app-alert-warning");
-            default -> alerta.getDialogPane()
-                    .getStyleClass().add("app-alert-information");
-        }
-
         alerta.showAndWait();
     }
 }
