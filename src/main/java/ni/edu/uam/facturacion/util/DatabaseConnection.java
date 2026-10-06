@@ -15,8 +15,25 @@ public class DatabaseConnection {
     private static final String PASSWORD =
             "1234";
 
+    private DatabaseConnection() {
+    }
+
     public static Connection getConnection()
             throws SQLException {
+
+        try {
+
+            Class.forName(
+                    "org.postgresql.Driver"
+            );
+
+        } catch (ClassNotFoundException e) {
+
+            throw new SQLException(
+                    "No se encontró el driver de PostgreSQL.",
+                    e
+            );
+        }
 
         return DriverManager.getConnection(
                 URL,

@@ -2,6 +2,7 @@ package ni.edu.uam.facturacion.controller;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -20,12 +21,17 @@ import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.scene.control.cell.PropertyValueFactory;
+
+import ni.edu.uam.facturacion.dao.CategoriaDAO;
+import ni.edu.uam.facturacion.dao.ProductoDAO;
 import ni.edu.uam.facturacion.mode1.Categoria;
 import ni.edu.uam.facturacion.mode1.Producto;
 
 import java.io.File;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -48,6 +54,12 @@ public class ProductoController {
 
     @FXML
     private ComboBox<Categoria> cmbCategoria;
+
+    @FXML
+    private ComboBox<String> cmbFiltroEstado;
+
+    @FXML
+    private ComboBox<String> cmbFiltroCategoria;
 
     @FXML
     private CheckBox chkActivo;
@@ -100,788 +112,607 @@ public class ProductoController {
     @FXML
     private Label lblContador;
 
+
     private final ObservableList<Producto> productos =
             FXCollections.observableArrayList();
 
-    private final ObservableList<Producto> productosFiltrados =
+    private final FilteredList<Producto> productosFiltrados =
+            new FilteredList<>(
+                    productos,
+                    producto -> true
+            );
+
+
+    private final ObservableList<Categoria> categorias =
             FXCollections.observableArrayList();
+
+
+    private final CategoriaDAO categoriaDAO =
+            new CategoriaDAO();
+
+    private final ProductoDAO productoDAO =
+            new ProductoDAO();
+
+
+    private Producto productoEnEdicion;
 
     private String rutaImagen;
 
-    private Producto productoEnEdicion;
 
     private final NumberFormat formatoMoneda =
             NumberFormat.getCurrencyInstance(
                     new Locale("es", "NI")
             );
 
+
     @FXML
     private void initialize() {
 
-        cargarCategorias();
-
         configurarTabla();
+
+        configurarFiltros();
 
         configurarBusqueda();
 
+        configurarValidaciones();
+
         configurarTooltips();
-
-        configurarValidacionVisual();
-
-        configurarControlDeEntrada();
 
         chkActivo.setSelected(true);
 
-        actualizarContador();
-
         establecerModoRegistro();
+
+        cargarDatosDesdeBaseDeDatos();
 
         txtCodigo.requestFocus();
     }
 
-    private void cargarCategorias() {
 
-        cmbCategoria.setItems(
-                FXCollections.observableArrayList(
-                        new Categoria(1, "Alimentos", true),
-                        new Categoria(2, "Bebidas", true),
-                        new Categoria(3, "Limpieza", true)
-                )
-        );
+    private void cargarDatosDesdeBaseDeDatos() {
+
+        try {
+
+            cargarCategoriasDesdeBD();
+
+            cargarProductosDesdeBD();
+
+        } catch (Exception e) {
+
+            mostrarMensaje(
+                    Alert.AlertType.ERROR,
+                    "Error de conexión",
+                    "No fue posible cargar los datos desde PostgreSQL.\n\n"
+                            + e.getMessage()
+            );
+        }
     }
+
+
+    private void cargarCategoriasDesdeBD()
+            throws Exception {
+
+        List<Categoria> lista =
+                categoriaDAO.listar();
+
+        categorias.setAll(lista);
+
+        cmbCategoria.setItems(categorias);
+
+        cmbFiltroCategoria.getItems().clear();
+
+        cmbFiltroCategoria
+                .getItems()
+                .add("Todas");
+
+        for (Categoria categoria : categorias) {
+
+            cmbFiltroCategoria
+                    .getItems()
+                    .add(categoria.getNombre());
+        }
+
+        cmbFiltroCategoria.setValue("Todas");
+    }
+
+
+    private void cargarProductosDesdeBD()
+            throws Exception {
+
+        List<Producto> lista =
+                productoDAO.listar();
+
+        productos.setAll(lista);
+
+        aplicarFiltros();
+    }
+
 
     private void configurarTabla() {
 
-        tblProductos.setItems(productosFiltrados);
+        tblProductos.setItems(
+                productosFiltrados
+        );
+
 
         colCodigo.setCellValueFactory(
-                new javafx.scene.control.cell.PropertyValueFactory<>(
+                new PropertyValueFactory<>(
                         "codigo"
                 )
         );
 
+
         colNombre.setCellValueFactory(
-                new javafx.scene.control.cell.PropertyValueFactory<>(
+                new PropertyValueFactory<>(
                         "nombre"
                 )
         );
 
+
         colCategoria.setCellValueFactory(
-                new javafx.scene.control.cell.PropertyValueFactory<>(
+                new PropertyValueFactory<>(
                         "categoria"
                 )
         );
 
+
         colPrecio.setCellValueFactory(
-                new javafx.scene.control.cell.PropertyValueFactory<>(
+                new PropertyValueFactory<>(
                         "precioVenta"
                 )
         );
 
+
         colExistencia.setCellValueFactory(
-                new javafx.scene.control.cell.PropertyValueFactory<>(
+                new PropertyValueFactory<>(
                         "existencia"
                 )
         );
 
+
         colActivo.setCellValueFactory(
-                new javafx.scene.control.cell.PropertyValueFactory<>(
+                new PropertyValueFactory<>(
                         "activo"
                 )
         );
 
-        colCodigo.setStyle(
-                "-fx-alignment: CENTER-LEFT;"
-        );
 
-        colNombre.setStyle(
-                "-fx-alignment: CENTER-LEFT;"
-        );
+        colPrecio.setCellFactory(
+                columna ->
+                        new TableCell<>() {
 
-        colCategoria.setStyle(
-                "-fx-alignment: CENTER-LEFT;"
-        );
+                            @Override
+                            protected void updateItem(
+                                    BigDecimal precio,
+                                    boolean empty
+                            ) {
 
-        colPrecio.setStyle(
-                "-fx-alignment: CENTER-RIGHT;"
-        );
+                                super.updateItem(
+                                        precio,
+                                        empty
+                                );
 
-        colExistencia.setStyle(
-                "-fx-alignment: CENTER;"
-        );
+                                if (
+                                        empty
+                                                || precio == null
+                                ) {
 
-        colActivo.setStyle(
-                "-fx-alignment: CENTER;"
-        );
+                                    setText(null);
 
-        colPrecio.setCellFactory(column ->
-                new TableCell<>() {
+                                } else {
 
-                    @Override
-                    protected void updateItem(
-                            BigDecimal precio,
-                            boolean empty
-                    ) {
-
-                        super.updateItem(precio, empty);
-
-                        if (empty || precio == null) {
-
-                            setText(null);
-
-                        } else {
-
-                            setText(
-                                    formatoMoneda.format(precio)
-                            );
-                        }
-                    }
-                }
-        );
-
-        colActivo.setCellFactory(column ->
-                new TableCell<>() {
-
-                    @Override
-                    protected void updateItem(
-                            Boolean activo,
-                            boolean empty
-                    ) {
-
-                        super.updateItem(activo, empty);
-
-                        if (empty || activo == null) {
-
-                            setText(null);
-                            setStyle("");
-
-                        } else if (activo) {
-
-                            setText("● Activo");
-
-                            setStyle(
-                                    "-fx-text-fill: #15803d;"
-                                            + "-fx-font-weight: bold;"
-                            );
-
-                        } else {
-
-                            setText("● Inactivo");
-
-                            setStyle(
-                                    "-fx-text-fill: #dc2626;"
-                                            + "-fx-font-weight: bold;"
-                            );
-                        }
-                    }
-                }
-        );
-
-        tblProductos.getSelectionModel()
-                .selectedItemProperty()
-                .addListener(
-                        (observable, anterior, seleccionado) -> {
-
-                            if (seleccionado != null) {
-
-                                btnEditar.setDisable(false);
-                                btnEliminar.setDisable(false);
-
-                            } else {
-
-                                btnEditar.setDisable(true);
-                                btnEliminar.setDisable(true);
+                                    setText(
+                                            formatoMoneda
+                                                    .format(precio)
+                                    );
+                                }
                             }
                         }
+        );
+
+
+        colActivo.setCellFactory(
+                columna ->
+                        new TableCell<>() {
+
+                            @Override
+                            protected void updateItem(
+                                    Boolean activo,
+                                    boolean empty
+                            ) {
+
+                                super.updateItem(
+                                        activo,
+                                        empty
+                                );
+
+                                if (
+                                        empty
+                                                || activo == null
+                                ) {
+
+                                    setText(null);
+                                    setStyle("");
+
+                                } else if (activo) {
+
+                                    setText(
+                                            "● Activo"
+                                    );
+
+                                    setStyle(
+                                            "-fx-text-fill: #15803d;"
+                                                    + "-fx-font-weight: bold;"
+                                    );
+
+                                } else {
+
+                                    setText(
+                                            "● Inactivo"
+                                    );
+
+                                    setStyle(
+                                            "-fx-text-fill: #dc2626;"
+                                                    + "-fx-font-weight: bold;"
+                                    );
+                                }
+                            }
+                        }
+        );
+
+
+        tblProductos
+                .getSelectionModel()
+                .selectedItemProperty()
+                .addListener(
+                        (
+                                observable,
+                                anterior,
+                                seleccionado
+                        ) -> {
+
+                            boolean haySeleccion =
+                                    seleccionado != null;
+
+                            btnEditar.setDisable(
+                                    !haySeleccion
+                            );
+
+                            btnEliminar.setDisable(
+                                    !haySeleccion
+                            );
+                        }
+                );
+    }
+
+
+    private void configurarFiltros() {
+
+        cmbFiltroEstado.setItems(
+                FXCollections.observableArrayList(
+                        "Todos",
+                        "Activos",
+                        "Inactivos"
+                )
+        );
+
+        cmbFiltroEstado.setValue(
+                "Todos"
+        );
+
+
+        cmbFiltroEstado
+                .valueProperty()
+                .addListener(
+                        (
+                                observable,
+                                anterior,
+                                nuevo
+                        ) -> aplicarFiltros()
                 );
 
-        tblProductos.widthProperty().addListener(
-                (observable, anterior, nuevo) -> {
 
-                    double ancho =
-                            nuevo.doubleValue();
-
-                    if (ancho > 0) {
-
-                        colCodigo.setPrefWidth(
-                                ancho * 0.13
-                        );
-
-                        colNombre.setPrefWidth(
-                                ancho * 0.25
-                        );
-
-                        colCategoria.setPrefWidth(
-                                ancho * 0.18
-                        );
-
-                        colPrecio.setPrefWidth(
-                                ancho * 0.14
-                        );
-
-                        colExistencia.setPrefWidth(
-                                ancho * 0.14
-                        );
-
-                        colActivo.setPrefWidth(
-                                ancho * 0.16
-                        );
-                    }
-                }
-        );
+        cmbFiltroCategoria
+                .valueProperty()
+                .addListener(
+                        (
+                                observable,
+                                anterior,
+                                nuevo
+                        ) -> aplicarFiltros()
+                );
     }
+
 
     private void configurarBusqueda() {
 
-        txtBuscar.textProperty().addListener(
-                (observable, anterior, nuevoTexto) ->
-                        filtrarProductos(nuevoTexto)
-        );
+        txtBuscar
+                .textProperty()
+                .addListener(
+                        (
+                                observable,
+                                anterior,
+                                nuevo
+                        ) -> aplicarFiltros()
+                );
     }
 
-    private void filtrarProductos(String texto) {
+
+    private void aplicarFiltros() {
 
         String busqueda =
-                texto == null
+                txtBuscar.getText() == null
                         ? ""
-                        : texto.trim().toLowerCase();
+                        : txtBuscar
+                        .getText()
+                        .trim()
+                        .toLowerCase(
+                                Locale.ROOT
+                        );
 
-        productosFiltrados.clear();
 
-        if (busqueda.isBlank()) {
+        String estado =
+                cmbFiltroEstado.getValue();
 
-            productosFiltrados.addAll(productos);
 
-        } else {
+        String categoria =
+                cmbFiltroCategoria.getValue();
 
-            for (Producto producto : productos) {
 
-                String codigo =
-                        producto.getCodigo() == null
-                                ? ""
-                                : producto.getCodigo()
-                                .toLowerCase();
+        productosFiltrados.setPredicate(
+                producto -> {
 
-                String nombre =
-                        producto.getNombre() == null
-                                ? ""
-                                : producto.getNombre()
-                                .toLowerCase();
+                    if (producto == null) {
 
-                String categoria =
-                        producto.getCategoria() == null
-                                ? ""
-                                : producto.getCategoria()
-                                .getNombre()
-                                .toLowerCase();
+                        return false;
+                    }
 
-                if (codigo.contains(busqueda)
-                        || nombre.contains(busqueda)
-                        || categoria.contains(busqueda)) {
 
-                    productosFiltrados.add(producto);
+                    boolean coincideBusqueda =
+                            busqueda.isBlank()
+                                    || contiene(
+                                    producto
+                                            .getCodigo(),
+                                    busqueda
+                            )
+                                    || contiene(
+                                    producto
+                                            .getNombre(),
+                                    busqueda
+                            )
+                                    || (
+                                    producto
+                                            .getCategoria()
+                                            != null
+                                            &&
+                                            contiene(
+                                                    producto
+                                                            .getCategoria()
+                                                            .getNombre(),
+                                                    busqueda
+                                            )
+                            );
+
+
+                    boolean coincideEstado =
+                            "Todos".equals(estado)
+                                    ||
+                                    (
+                                            "Activos".equals(estado)
+                                                    && producto.isActivo()
+                                    )
+                                    ||
+                                    (
+                                            "Inactivos".equals(estado)
+                                                    && !producto.isActivo()
+                                    );
+
+
+                    boolean coincideCategoria =
+                            categoria == null
+                                    || "Todas".equals(categoria)
+                                    || (
+                                    producto
+                                            .getCategoria()
+                                            != null
+                                            &&
+                                            producto
+                                                    .getCategoria()
+                                                    .getNombre()
+                                                    .equalsIgnoreCase(
+                                                            categoria
+                                                    )
+                            );
+
+
+                    return coincideBusqueda
+                            && coincideEstado
+                            && coincideCategoria;
                 }
-            }
-        }
+        );
+
 
         actualizarContador();
     }
+
+
+    private boolean contiene(
+            String valor,
+            String busqueda
+    ) {
+
+        return valor != null
+                && valor
+                .toLowerCase(
+                        Locale.ROOT
+                )
+                .contains(busqueda);
+    }
+
 
     @FXML
     private void limpiarBusqueda() {
 
         txtBuscar.clear();
 
-        productosFiltrados.setAll(productos);
+        cmbFiltroEstado.setValue(
+                "Todos"
+        );
 
-        actualizarContador();
+        cmbFiltroCategoria.setValue(
+                "Todas"
+        );
+
+        aplicarFiltros();
 
         txtBuscar.requestFocus();
     }
 
+
     private void actualizarContador() {
 
-        if (lblContador != null) {
+        int cantidad =
+                productosFiltrados.size();
 
-            int cantidad =
-                    productosFiltrados.size();
-
-            lblContador.setText(
-                    "Mostrando "
-                            + cantidad
-                            + (
-                            cantidad == 1
-                                    ? " producto"
-                                    : " productos"
-                    )
-            );
-        }
-    }
-
-    private void configurarValidacionVisual() {
-
-        txtCodigo.textProperty().addListener(
-                (observable, anterior, nuevo) ->
-                        validarCodigoVisual()
-        );
-
-        txtNombre.textProperty().addListener(
-                (observable, anterior, nuevo) ->
-                        validarTexto(txtNombre)
-        );
-
-        txtPrecio.textProperty().addListener(
-                (observable, anterior, nuevo) ->
-                        validarPrecio()
-        );
-
-        txtExistencia.textProperty().addListener(
-                (observable, anterior, nuevo) ->
-                        validarExistencia()
-        );
-
-        cmbCategoria.valueProperty().addListener(
-                (observable, anterior, nuevo) ->
-                        validarCategoria()
+        lblContador.setText(
+                "Mostrando "
+                        + cantidad
+                        + (
+                        cantidad == 1
+                                ? " producto"
+                                : " productos"
+                )
         );
     }
 
-    private void configurarControlDeEntrada() {
 
-        configurarControlCodigo();
+    private void configurarValidaciones() {
 
-        configurarControlNombre();
+        txtCodigo.textProperty()
+                .addListener(
+                        (
+                                observable,
+                                anterior,
+                                nuevo
+                        ) -> {
 
-        configurarControlPrecio();
+                            if (nuevo == null) {
+                                return;
+                            }
 
-        configurarControlExistencia();
+                            if (nuevo.length() > 50) {
 
-        configurarControlBusqueda();
+                                txtCodigo.setText(
+                                        nuevo.substring(
+                                                0,
+                                                50
+                                        )
+                                );
+
+                                txtCodigo.positionCaret(
+                                        txtCodigo
+                                                .getText()
+                                                .length()
+                                );
+                            }
+                        }
+                );
+
+
+        txtNombre.textProperty()
+                .addListener(
+                        (
+                                observable,
+                                anterior,
+                                nuevo
+                        ) -> {
+
+                            if (nuevo == null) {
+                                return;
+                            }
+
+                            if (nuevo.length() > 150) {
+
+                                txtNombre.setText(
+                                        nuevo.substring(
+                                                0,
+                                                150
+                                        )
+                                );
+
+                                txtNombre.positionCaret(
+                                        txtNombre
+                                                .getText()
+                                                .length()
+                                );
+                            }
+                        }
+                );
+
+
+        txtPrecio.textProperty()
+                .addListener(
+                        (
+                                observable,
+                                anterior,
+                                nuevo
+                        ) -> {
+
+                            if (nuevo == null) {
+                                return;
+                            }
+
+                            if (
+                                    !nuevo.matches(
+                                            "\\d*(\\.\\d*)?"
+                                    )
+                            ) {
+
+                                txtPrecio.setText(
+                                        anterior
+                                );
+
+                                txtPrecio.positionCaret(
+                                        txtPrecio
+                                                .getText()
+                                                .length()
+                                );
+                            }
+                        }
+                );
+
+
+        txtExistencia.textProperty()
+                .addListener(
+                        (
+                                observable,
+                                anterior,
+                                nuevo
+                        ) -> {
+
+                            if (nuevo == null) {
+                                return;
+                            }
+
+                            if (
+                                    !nuevo.matches(
+                                            "\\d*"
+                                    )
+                            ) {
+
+                                txtExistencia.setText(
+                                        anterior
+                                );
+
+                                txtExistencia.positionCaret(
+                                        txtExistencia
+                                                .getText()
+                                                .length()
+                                );
+                            }
+                        }
+                );
     }
 
-    private void configurarControlCodigo() {
-
-        txtCodigo.textProperty().addListener(
-                (observable, anterior, nuevo) -> {
-
-                    if (nuevo == null) {
-                        return;
-                    }
-
-                    String limpio =
-                            nuevo.replaceAll("^\\s+", "");
-
-                    if (limpio.length() > 20) {
-
-                        limpio =
-                                limpio.substring(0, 20);
-                    }
-
-                    if (!limpio.equals(nuevo)) {
-
-                        txtCodigo.setText(limpio);
-
-                        txtCodigo.positionCaret(
-                                txtCodigo.getText().length()
-                        );
-                    }
-                }
-        );
-    }
-
-    private void configurarControlNombre() {
-
-        txtNombre.textProperty().addListener(
-                (observable, anterior, nuevo) -> {
-
-                    if (nuevo == null) {
-                        return;
-                    }
-
-                    String limpio =
-                            nuevo.replaceAll("^\\s+", "");
-
-                    if (limpio.length() > 80) {
-
-                        limpio =
-                                limpio.substring(0, 80);
-                    }
-
-                    if (!limpio.equals(nuevo)) {
-
-                        txtNombre.setText(limpio);
-
-                        txtNombre.positionCaret(
-                                txtNombre.getText().length()
-                        );
-                    }
-                }
-        );
-    }
-
-    private void configurarControlPrecio() {
-
-        txtPrecio.textProperty().addListener(
-                (observable, anterior, nuevo) -> {
-
-                    if (nuevo == null) {
-                        return;
-                    }
-
-                    if (!nuevo.matches(
-                            "\\d*(\\.\\d*)?"
-                    )) {
-
-                        txtPrecio.setText(anterior);
-
-                        txtPrecio.positionCaret(
-                                txtPrecio.getText().length()
-                        );
-
-                        return;
-                    }
-
-                    if (nuevo.length() > 12) {
-
-                        txtPrecio.setText(anterior);
-
-                        txtPrecio.positionCaret(
-                                txtPrecio.getText().length()
-                        );
-                    }
-                }
-        );
-    }
-
-    private void configurarControlExistencia() {
-
-        txtExistencia.textProperty().addListener(
-                (observable, anterior, nuevo) -> {
-
-                    if (nuevo == null) {
-                        return;
-                    }
-
-                    if (!nuevo.matches("\\d*")) {
-
-                        txtExistencia.setText(anterior);
-
-                        txtExistencia.positionCaret(
-                                txtExistencia.getText().length()
-                        );
-
-                        return;
-                    }
-
-                    if (nuevo.length() > 9) {
-
-                        txtExistencia.setText(anterior);
-
-                        txtExistencia.positionCaret(
-                                txtExistencia.getText().length()
-                        );
-                    }
-                }
-        );
-    }
-
-    private void configurarControlBusqueda() {
-
-        txtBuscar.textProperty().addListener(
-                (observable, anterior, nuevo) -> {
-
-                    if (nuevo != null
-                            && nuevo.length() > 80) {
-
-                        txtBuscar.setText(
-                                nuevo.substring(0, 80)
-                        );
-
-                        txtBuscar.positionCaret(
-                                txtBuscar.getText().length()
-                        );
-                    }
-                }
-        );
-    }
-
-    private void validarCodigoVisual() {
-
-        String codigo =
-                txtCodigo.getText().trim();
-
-        if (codigo.isEmpty()) {
-
-            marcarError(txtCodigo);
-
-            return;
-        }
-
-        if (codigoExisteParaOtroProducto(codigo)) {
-
-            marcarError(txtCodigo);
-
-        } else {
-
-            limpiarError(txtCodigo);
-        }
-    }
-
-    private boolean codigoExisteParaOtroProducto(
-            String codigo
-    ) {
-
-        for (Producto producto : productos) {
-
-            if (producto.getCodigo() == null) {
-                continue;
-            }
-
-            if (!producto.getCodigo()
-                    .trim()
-                    .equalsIgnoreCase(codigo)) {
-
-                continue;
-            }
-
-            if (productoEnEdicion != null
-                    && producto == productoEnEdicion) {
-
-                continue;
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
-    private void validarTexto(TextField campo) {
-
-        if (campo.getText().trim().isEmpty()) {
-
-            marcarError(campo);
-
-        } else {
-
-            limpiarError(campo);
-        }
-    }
-
-    private void validarCategoria() {
-
-        if (cmbCategoria.getValue() == null) {
-
-            marcarError(cmbCategoria);
-
-        } else {
-
-            limpiarError(cmbCategoria);
-        }
-    }
-
-    private void validarPrecio() {
-
-        String texto =
-                txtPrecio.getText().trim();
-
-        if (texto.isEmpty()) {
-
-            marcarError(txtPrecio);
-
-            return;
-        }
-
-        try {
-
-            BigDecimal precio =
-                    new BigDecimal(texto);
-
-            if (precio.signum() <= 0) {
-
-                marcarError(txtPrecio);
-
-            } else {
-
-                limpiarError(txtPrecio);
-            }
-
-        } catch (NumberFormatException e) {
-
-            marcarError(txtPrecio);
-        }
-    }
-
-    private void validarExistencia() {
-
-        String texto =
-                txtExistencia.getText().trim();
-
-        if (texto.isEmpty()) {
-
-            marcarError(txtExistencia);
-
-            return;
-        }
-
-        try {
-
-            int existencia =
-                    Integer.parseInt(texto);
-
-            if (existencia < 0) {
-
-                marcarError(txtExistencia);
-
-            } else {
-
-                limpiarError(txtExistencia);
-            }
-
-        } catch (NumberFormatException e) {
-
-            marcarError(txtExistencia);
-        }
-    }
-
-    private void marcarError(Control control) {
-
-        if (!control.getStyleClass()
-                .contains("field-error")) {
-
-            control.getStyleClass()
-                    .add("field-error");
-        }
-    }
-
-    private void limpiarError(Control control) {
-
-        control.getStyleClass()
-                .remove("field-error");
-    }
-
-    private void limpiarValidaciones() {
-
-        limpiarError(txtCodigo);
-        limpiarError(txtNombre);
-        limpiarError(txtPrecio);
-        limpiarError(txtExistencia);
-        limpiarError(cmbCategoria);
-    }
-
-    private void configurarTooltips() {
-
-        configurarTooltip(
-                txtCodigo,
-                "Código del producto\n"
-                        + "Identificador único del producto."
-        );
-
-        configurarTooltip(
-                txtNombre,
-                "Nombre del producto\n"
-                        + "Ingrese el nombre que tendrá el producto."
-        );
-
-        configurarTooltip(
-                cmbCategoria,
-                "Categoría\n"
-                        + "Seleccione la categoría del producto."
-        );
-
-        configurarTooltip(
-                txtPrecio,
-                "Precio de venta\n"
-                        + "Ingrese un precio mayor que cero."
-        );
-
-        configurarTooltip(
-                txtExistencia,
-                "Existencia\n"
-                        + "Cantidad disponible del producto."
-        );
-
-        configurarTooltip(
-                chkActivo,
-                "Estado del producto\n"
-                        + "Indica si el producto se encuentra activo."
-        );
-
-        configurarTooltip(
-                btnImagen,
-                "Seleccionar imagen\n"
-                        + "Permite elegir una imagen para el producto."
-        );
-
-        configurarTooltip(
-                btnGuardar,
-                "Guardar producto\n"
-                        + "Registra o actualiza el producto."
-        );
-
-        configurarTooltip(
-                btnCancelarEdicion,
-                "Cancelar edición\n"
-                        + "Cancela los cambios y vuelve al modo de registro."
-        );
-
-        configurarTooltip(
-                btnEditar,
-                "Editar producto\n"
-                        + "Carga el producto seleccionado para modificarlo."
-        );
-
-        configurarTooltip(
-                btnEliminar,
-                "Eliminar producto\n"
-                        + "Elimina el producto seleccionado."
-        );
-
-        configurarTooltip(
-                btnCerrar,
-                "Cerrar ventana\n"
-                        + "Cierra la gestión de productos."
-        );
-
-        configurarTooltip(
-                txtBuscar,
-                "Buscar productos\n"
-                        + "Filtra por código, nombre o categoría."
-        );
-
-        configurarTooltip(
-                btnLimpiarBusqueda,
-                "Limpiar búsqueda\n"
-                        + "Muestra nuevamente todos los productos."
-        );
-    }
-
-    private void configurarTooltip(
-            Control control,
-            String texto
-    ) {
-
-        Tooltip tooltip =
-                new Tooltip(texto);
-
-        tooltip.setShowDelay(
-                Duration.millis(350)
-        );
-
-        tooltip.setShowDuration(
-                Duration.seconds(8)
-        );
-
-        tooltip.setHideDelay(
-                Duration.millis(150)
-        );
-
-        tooltip.setWrapText(true);
-
-        tooltip.setMaxWidth(300);
-
-        control.setTooltip(tooltip);
-    }
 
     @FXML
     private void seleccionarImagen() {
@@ -893,14 +724,17 @@ public class ProductoController {
                 "Seleccionar imagen del producto"
         );
 
-        chooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter(
-                        "Imágenes",
-                        "*.png",
-                        "*.jpg",
-                        "*.jpeg"
-                )
-        );
+        chooser.getExtensionFilters()
+                .add(
+                        new FileChooser
+                                .ExtensionFilter(
+                                "Imágenes",
+                                "*.png",
+                                "*.jpg",
+                                "*.jpeg"
+                        )
+                );
+
 
         File archivo =
                 chooser.showOpenDialog(
@@ -909,10 +743,13 @@ public class ProductoController {
                                 .getWindow()
                 );
 
+
         if (archivo != null) {
 
             rutaImagen =
-                    archivo.toURI().toString();
+                    archivo
+                            .toURI()
+                            .toString();
 
             imgProducto.setImage(
                     new Image(rutaImagen)
@@ -920,261 +757,36 @@ public class ProductoController {
         }
     }
 
-    @FXML
-    private void editarProducto() {
-
-        Producto seleccionado =
-                tblProductos
-                        .getSelectionModel()
-                        .getSelectedItem();
-
-        if (seleccionado == null) {
-
-            mostrarMensaje(
-                    Alert.AlertType.WARNING,
-                    "Producto no seleccionado",
-                    "Seleccione un producto de la tabla "
-                            + "para poder editarlo."
-            );
-
-            return;
-        }
-
-        productoEnEdicion =
-                seleccionado;
-
-        txtCodigo.setText(
-                seleccionado.getCodigo()
-        );
-
-        txtNombre.setText(
-                seleccionado.getNombre()
-        );
-
-        cmbCategoria.setValue(
-                seleccionado.getCategoria()
-        );
-
-        txtPrecio.setText(
-                seleccionado.getPrecioVenta()
-                        .toPlainString()
-        );
-
-        txtExistencia.setText(
-                String.valueOf(
-                        seleccionado.getExistencia()
-                )
-        );
-
-        chkActivo.setSelected(
-                seleccionado.isActivo()
-        );
-
-        rutaImagen =
-                seleccionado.getRutaImagen();
-
-        if (rutaImagen != null
-                && !rutaImagen.isBlank()) {
-
-            try {
-
-                imgProducto.setImage(
-                        new Image(rutaImagen)
-                );
-
-            } catch (Exception e) {
-
-                imgProducto.setImage(null);
-            }
-
-        } else {
-
-            imgProducto.setImage(null);
-        }
-
-        btnGuardar.setText(
-                "Guardar cambios"
-        );
-
-        btnCancelarEdicion.setVisible(true);
-
-        btnCancelarEdicion.setManaged(true);
-
-        txtCodigo.requestFocus();
-
-        validarCodigoVisual();
-    }
-
-    @FXML
-    private void cancelarEdicion() {
-
-        productoEnEdicion = null;
-
-        btnGuardar.setText(
-                "Guardar producto"
-        );
-
-        btnCancelarEdicion.setVisible(false);
-
-        btnCancelarEdicion.setManaged(false);
-
-        limpiar();
-
-        txtCodigo.requestFocus();
-    }
-
-    @FXML
-    private void eliminarProducto() {
-
-        Producto seleccionado =
-                tblProductos
-                        .getSelectionModel()
-                        .getSelectedItem();
-
-        if (seleccionado == null) {
-
-            mostrarMensaje(
-                    Alert.AlertType.WARNING,
-                    "Producto no seleccionado",
-                    "Seleccione un producto de la tabla "
-                            + "para poder eliminarlo."
-            );
-
-            return;
-        }
-
-        Alert confirmacion =
-                new Alert(
-                        Alert.AlertType.CONFIRMATION,
-                        "¿Está seguro de que desea eliminar "
-                                + "este producto?\n\n"
-                                + "Código: "
-                                + seleccionado.getCodigo()
-                                + "\n"
-                                + "Nombre: "
-                                + seleccionado.getNombre()
-                                + "\n\n"
-                                + "Esta acción no se puede deshacer.",
-                        ButtonType.OK,
-                        ButtonType.CANCEL
-                );
-
-        confirmacion.setTitle(
-                "Sistema de Facturación"
-        );
-
-        confirmacion.setHeaderText(
-                "Confirmar eliminación"
-        );
-
-        confirmacion.getDialogPane()
-                .getStyleClass()
-                .add("app-alert");
-
-        confirmacion.getDialogPane()
-                .getStyleClass()
-                .add("app-alert-warning");
-
-        var hojaEstilos =
-                getClass().getResource(
-                        "/ni/edu/uam/facturacion/styles/app.css"
-                );
-
-        if (hojaEstilos != null) {
-
-            confirmacion.getDialogPane()
-                    .getStylesheets()
-                    .add(
-                            hojaEstilos.toExternalForm()
-                    );
-        }
-
-        Optional<ButtonType> resultado =
-                confirmacion.showAndWait();
-
-        if (resultado.isPresent()
-                && resultado.get() == ButtonType.OK) {
-
-            productos.remove(seleccionado);
-
-            filtrarProductos(
-                    txtBuscar.getText()
-            );
-
-            productoEnEdicion = null;
-
-            btnGuardar.setText(
-                    "Guardar producto"
-            );
-
-            btnCancelarEdicion.setVisible(false);
-
-            btnCancelarEdicion.setManaged(false);
-
-            limpiar();
-
-            mostrarMensaje(
-                    Alert.AlertType.INFORMATION,
-                    "Producto eliminado",
-                    "El producto se eliminó correctamente "
-                            + "del catálogo."
-            );
-
-            txtCodigo.requestFocus();
-        }
-    }
 
     @FXML
     private void guardar() {
 
         String codigo =
-                txtCodigo.getText().trim();
+                txtCodigo
+                        .getText()
+                        .trim();
 
         String nombre =
-                txtNombre.getText().trim();
+                txtNombre
+                        .getText()
+                        .trim();
 
-        if (codigo.isEmpty()
-                || nombre.isEmpty()
+
+        if (codigo.isBlank()
+                || nombre.isBlank()
+                || cmbCategoria.getValue() == null
                 || txtPrecio.getText().isBlank()
-                || txtExistencia.getText().isBlank()
-                || cmbCategoria.getValue() == null) {
-
-            validarCodigoVisual();
-
-            validarTexto(txtNombre);
-
-            validarPrecio();
-
-            validarExistencia();
-
-            validarCategoria();
+                || txtExistencia.getText().isBlank()) {
 
             mostrarMensaje(
                     Alert.AlertType.WARNING,
                     "Datos incompletos",
-                    "Complete los campos obligatorios."
+                    "Complete todos los campos obligatorios."
             );
 
             return;
         }
 
-        if (codigoExisteParaOtroProducto(codigo)) {
-
-            marcarError(txtCodigo);
-
-            mostrarMensaje(
-                    Alert.AlertType.WARNING,
-                    "Código duplicado",
-                    "Ya existe otro producto registrado "
-                            + "con el código \""
-                            + codigo
-                            + "\"."
-            );
-
-            txtCodigo.requestFocus();
-
-            return;
-        }
 
         try {
 
@@ -1185,6 +797,7 @@ public class ProductoController {
                                     .trim()
                     );
 
+
             int existencia =
                     Integer.parseInt(
                             txtExistencia
@@ -1192,26 +805,60 @@ public class ProductoController {
                                     .trim()
                     );
 
-            if (precio.signum() <= 0
-                    || existencia < 0) {
 
-                validarPrecio();
-
-                validarExistencia();
+            if (precio.signum() <= 0) {
 
                 mostrarMensaje(
                         Alert.AlertType.WARNING,
-                        "Datos no válidos",
-                        "El precio debe ser mayor que cero "
-                                + "y la existencia no puede ser negativa."
+                        "Precio inválido",
+                        "El precio debe ser mayor que cero."
                 );
 
                 return;
             }
 
+
+            if (existencia < 0) {
+
+                mostrarMensaje(
+                        Alert.AlertType.WARNING,
+                        "Existencia inválida",
+                        "La existencia no puede ser negativa."
+                );
+
+                return;
+            }
+
+
+            Integer idExcluir =
+                    productoEnEdicion == null
+                            ? null
+                            : productoEnEdicion.getId();
+
+
+            if (
+                    productoDAO.codigoExiste(
+                            codigo,
+                            idExcluir
+                    )
+            ) {
+
+                mostrarMensaje(
+                        Alert.AlertType.WARNING,
+                        "Código duplicado",
+                        "Ya existe un producto con el código: "
+                                + codigo
+                );
+
+                txtCodigo.requestFocus();
+
+                return;
+            }
+
+
             if (productoEnEdicion == null) {
 
-                Producto producto =
+                Producto nuevoProducto =
                         new Producto(
                                 null,
                                 codigo,
@@ -1223,17 +870,16 @@ public class ProductoController {
                                 chkActivo.isSelected()
                         );
 
-                productos.add(producto);
 
-                filtrarProductos(
-                        txtBuscar.getText()
+                productoDAO.insertar(
+                        nuevoProducto
                 );
+
 
                 mostrarMensaje(
                         Alert.AlertType.INFORMATION,
                         "Producto registrado",
-                        "El producto se agregó correctamente "
-                                + "al catálogo."
+                        "El producto se guardó correctamente en PostgreSQL."
                 );
 
             } else {
@@ -1266,48 +912,393 @@ public class ProductoController {
                         chkActivo.isSelected()
                 );
 
-                tblProductos.refresh();
 
-                filtrarProductos(
-                        txtBuscar.getText()
+                productoDAO.actualizar(
+                        productoEnEdicion
                 );
+
 
                 mostrarMensaje(
                         Alert.AlertType.INFORMATION,
                         "Producto actualizado",
-                        "Los cambios del producto se "
-                                + "guardaron correctamente."
+                        "Los cambios se guardaron correctamente en PostgreSQL."
                 );
             }
 
+
+            cargarProductosDesdeBD();
+
             productoEnEdicion = null;
 
-            btnGuardar.setText(
-                    "Guardar producto"
-            );
+            establecerModoRegistro();
 
-            btnCancelarEdicion.setVisible(false);
-
-            btnCancelarEdicion.setManaged(false);
-
-            limpiar();
+            limpiarFormulario();
 
             txtCodigo.requestFocus();
 
+
         } catch (NumberFormatException e) {
-
-            validarPrecio();
-
-            validarExistencia();
 
             mostrarMensaje(
                     Alert.AlertType.ERROR,
-                    "Datos no válidos",
-                    "El precio o la existencia no tienen "
-                            + "un formato válido."
+                    "Datos inválidos",
+                    "El precio o la existencia no tienen un formato válido."
+            );
+
+        } catch (Exception e) {
+
+            mostrarMensaje(
+                    Alert.AlertType.ERROR,
+                    "Error al guardar",
+                    "No fue posible guardar el producto en PostgreSQL.\n\n"
+                            + e.getMessage()
             );
         }
     }
+
+
+    @FXML
+    private void editarProducto() {
+
+        Producto seleccionado =
+                tblProductos
+                        .getSelectionModel()
+                        .getSelectedItem();
+
+
+        if (seleccionado == null) {
+
+            return;
+        }
+
+
+        productoEnEdicion =
+                seleccionado;
+
+
+        txtCodigo.setText(
+                seleccionado.getCodigo()
+        );
+
+
+        txtNombre.setText(
+                seleccionado.getNombre()
+        );
+
+
+        seleccionarCategoriaPorId(
+                seleccionado
+                        .getCategoria()
+                        .getId()
+        );
+
+
+        txtPrecio.setText(
+                seleccionado
+                        .getPrecioVenta()
+                        .toPlainString()
+        );
+
+
+        txtExistencia.setText(
+                String.valueOf(
+                        seleccionado
+                                .getExistencia()
+                )
+        );
+
+
+        chkActivo.setSelected(
+                seleccionado.isActivo()
+        );
+
+
+        rutaImagen =
+                seleccionado.getRutaImagen();
+
+
+        if (
+                rutaImagen != null
+                        && !rutaImagen.isBlank()
+        ) {
+
+            try {
+
+                imgProducto.setImage(
+                        new Image(rutaImagen)
+                );
+
+            } catch (Exception e) {
+
+                imgProducto.setImage(null);
+            }
+
+        } else {
+
+            imgProducto.setImage(null);
+        }
+
+
+        btnGuardar.setText(
+                "Guardar cambios"
+        );
+
+        btnCancelarEdicion.setVisible(
+                true
+        );
+
+        btnCancelarEdicion.setManaged(
+                true
+        );
+
+
+        txtCodigo.requestFocus();
+    }
+
+
+    private void seleccionarCategoriaPorId(
+            Integer categoriaId
+    ) {
+
+        if (categoriaId == null) {
+
+            cmbCategoria.getSelectionModel()
+                    .clearSelection();
+
+            return;
+        }
+
+
+        for (Categoria categoria :
+                cmbCategoria.getItems()) {
+
+            if (
+                    categoria.getId()
+                            .equals(categoriaId)
+            ) {
+
+                cmbCategoria.setValue(
+                        categoria
+                );
+
+                return;
+            }
+        }
+    }
+
+
+    @FXML
+    private void cancelarEdicion() {
+
+        productoEnEdicion = null;
+
+        establecerModoRegistro();
+
+        limpiarFormulario();
+
+        txtCodigo.requestFocus();
+    }
+
+
+    @FXML
+    private void eliminarProducto() {
+
+        Producto seleccionado =
+                tblProductos
+                        .getSelectionModel()
+                        .getSelectedItem();
+
+
+        if (seleccionado == null) {
+
+            return;
+        }
+
+
+        Alert confirmacion =
+                new Alert(
+                        Alert.AlertType.CONFIRMATION,
+                        "¿Está seguro de eliminar el producto?\n\n"
+                                + "Código: "
+                                + seleccionado.getCodigo()
+                                + "\n"
+                                + "Nombre: "
+                                + seleccionado.getNombre(),
+                        ButtonType.OK,
+                        ButtonType.CANCEL
+                );
+
+
+        confirmacion.setTitle(
+                "Sistema de Facturación"
+        );
+
+        confirmacion.setHeaderText(
+                "Confirmar eliminación"
+        );
+
+
+        Optional<ButtonType> resultado =
+                confirmacion.showAndWait();
+
+
+        if (
+                resultado.isPresent()
+                        && resultado.get()
+                        == ButtonType.OK
+        ) {
+
+            try {
+
+                productoDAO.eliminar(
+                        seleccionado.getId()
+                );
+
+
+                cargarProductosDesdeBD();
+
+
+                mostrarMensaje(
+                        Alert.AlertType.INFORMATION,
+                        "Producto eliminado",
+                        "El producto fue eliminado correctamente de PostgreSQL."
+                );
+
+
+            } catch (Exception e) {
+
+                mostrarMensaje(
+                        Alert.AlertType.ERROR,
+                        "Error al eliminar",
+                        "No fue posible eliminar el producto.\n\n"
+                                + e.getMessage()
+                );
+            }
+        }
+    }
+
+
+    private void establecerModoRegistro() {
+
+        btnGuardar.setText(
+                "Guardar producto"
+        );
+
+        btnCancelarEdicion.setVisible(
+                false
+        );
+
+        btnCancelarEdicion.setManaged(
+                false
+        );
+
+        btnEditar.setDisable(
+                true
+        );
+
+        btnEliminar.setDisable(
+                true
+        );
+    }
+
+
+    private void limpiarFormulario() {
+
+        txtCodigo.clear();
+
+        txtNombre.clear();
+
+        cmbCategoria
+                .getSelectionModel()
+                .clearSelection();
+
+        txtPrecio.clear();
+
+        txtExistencia.clear();
+
+        chkActivo.setSelected(
+                true
+        );
+
+        imgProducto.setImage(
+                null
+        );
+
+        rutaImagen = null;
+
+        tblProductos
+                .getSelectionModel()
+                .clearSelection();
+    }
+
+
+    private void configurarTooltips() {
+
+        configurarTooltip(
+                txtBuscar,
+                "Buscar por código, nombre o categoría."
+        );
+
+        configurarTooltip(
+                cmbFiltroEstado,
+                "Filtrar productos por estado."
+        );
+
+        configurarTooltip(
+                cmbFiltroCategoria,
+                "Filtrar productos por categoría."
+        );
+    }
+
+
+    private void configurarTooltip(
+            Control control,
+            String texto
+    ) {
+
+        if (control == null) {
+
+            return;
+        }
+
+
+        Tooltip tooltip =
+                new Tooltip(texto);
+
+        tooltip.setShowDelay(
+                Duration.millis(300)
+        );
+
+        control.setTooltip(
+                tooltip
+        );
+    }
+
+
+    private void mostrarMensaje(
+            Alert.AlertType tipo,
+            String titulo,
+            String mensaje
+    ) {
+
+        Alert alerta =
+                new Alert(
+                        tipo,
+                        mensaje,
+                        ButtonType.OK
+                );
+
+        alerta.setTitle(
+                "Sistema de Facturación"
+        );
+
+        alerta.setHeaderText(
+                titulo
+        );
+
+        alerta.showAndWait();
+    }
+
 
     @FXML
     private void cerrar() {
@@ -1318,138 +1309,5 @@ public class ProductoController {
                         .getWindow();
 
         stage.close();
-    }
-
-    private void establecerModoRegistro() {
-
-        productoEnEdicion = null;
-
-        if (btnGuardar != null) {
-
-            btnGuardar.setText(
-                    "Guardar producto"
-            );
-        }
-
-        if (btnCancelarEdicion != null) {
-
-            btnCancelarEdicion.setVisible(false);
-
-            btnCancelarEdicion.setManaged(false);
-        }
-
-        if (btnEditar != null) {
-
-            btnEditar.setDisable(true);
-        }
-
-        if (btnEliminar != null) {
-
-            btnEliminar.setDisable(true);
-        }
-    }
-
-    private void limpiar() {
-
-        txtCodigo.clear();
-
-        txtNombre.clear();
-
-        txtPrecio.clear();
-
-        txtExistencia.clear();
-
-        cmbCategoria
-                .getSelectionModel()
-                .clearSelection();
-
-        chkActivo.setSelected(true);
-
-        imgProducto.setImage(null);
-
-        rutaImagen = null;
-
-        limpiarValidaciones();
-
-        tblProductos
-                .getSelectionModel()
-                .clearSelection();
-
-        if (btnEditar != null) {
-
-            btnEditar.setDisable(true);
-        }
-
-        if (btnEliminar != null) {
-
-            btnEliminar.setDisable(true);
-        }
-    }
-
-    private void mostrarMensaje(
-            Alert.AlertType tipo,
-            String titulo,
-            String texto
-    ) {
-
-        Alert alerta =
-                new Alert(
-                        tipo,
-                        texto,
-                        ButtonType.OK
-                );
-
-        alerta.setTitle(
-                "Sistema de Facturación"
-        );
-
-        alerta.setHeaderText(titulo);
-
-        alerta.getDialogPane()
-                .getStyleClass()
-                .add("app-alert");
-
-        switch (tipo) {
-
-            case INFORMATION ->
-                    alerta.getDialogPane()
-                            .getStyleClass()
-                            .add(
-                                    "app-alert-information"
-                            );
-
-            case WARNING ->
-                    alerta.getDialogPane()
-                            .getStyleClass()
-                            .add(
-                                    "app-alert-warning"
-                            );
-
-            case ERROR ->
-                    alerta.getDialogPane()
-                            .getStyleClass()
-                            .add(
-                                    "app-alert-error"
-                            );
-
-            default -> {
-            }
-        }
-
-        var hojaEstilos =
-                getClass().getResource(
-                        "/ni/edu/uam/facturacion/styles/app.css"
-                );
-
-        if (hojaEstilos != null) {
-
-            alerta.getDialogPane()
-                    .getStylesheets()
-                    .add(
-                            hojaEstilos.toExternalForm()
-                    );
-        }
-
-        alerta.showAndWait();
     }
 }

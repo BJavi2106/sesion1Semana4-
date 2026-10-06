@@ -37,6 +37,7 @@
 
     </top>
 
+
     <center>
 
         <HBox styleClass="content-area"
@@ -54,31 +55,22 @@
                 <Label text="Ingrese los datos correspondientes."
                        styleClass="card-subtitle"/>
 
+
                 <Label text="Código"
                        styleClass="label-form"/>
 
                 <TextField fx:id="txtCodigo"
                            prefHeight="32"
-                           promptText="Ej. PROD-001">
+                           promptText="Ej. PROD-001"/>
 
-                    <tooltip>
-                        <Tooltip text="Código del producto&#10;Identificador del producto dentro del sistema."/>
-                    </tooltip>
-
-                </TextField>
 
                 <Label text="Nombre"
                        styleClass="label-form"/>
 
                 <TextField fx:id="txtNombre"
                            prefHeight="32"
-                           promptText="Nombre del producto">
+                           promptText="Nombre del producto"/>
 
-                    <tooltip>
-                        <Tooltip text="Nombre del producto&#10;Ingrese el nombre que tendrá el producto."/>
-                    </tooltip>
-
-                </TextField>
 
                 <Label text="Categoría"
                        styleClass="label-form"/>
@@ -86,13 +78,8 @@
                 <ComboBox fx:id="cmbCategoria"
                           prefHeight="32"
                           maxWidth="Infinity"
-                          promptText="Seleccione una categoría">
+                          promptText="Seleccione una categoría"/>
 
-                    <tooltip>
-                        <Tooltip text="Categoría&#10;Seleccione la categoría a la que pertenece el producto."/>
-                    </tooltip>
-
-                </ComboBox>
 
                 <HBox spacing="10">
 
@@ -104,15 +91,10 @@
 
                         <TextField fx:id="txtPrecio"
                                    prefHeight="32"
-                                   promptText="Ej. 150.00">
-
-                            <tooltip>
-                                <Tooltip text="Precio de venta&#10;Ingrese un precio mayor que cero."/>
-                            </tooltip>
-
-                        </TextField>
+                                   promptText="Ej. 150.00"/>
 
                     </VBox>
+
 
                     <VBox spacing="5"
                           HBox.hgrow="ALWAYS">
@@ -122,26 +104,16 @@
 
                         <TextField fx:id="txtExistencia"
                                    prefHeight="32"
-                                   promptText="Ej. 25">
-
-                            <tooltip>
-                                <Tooltip text="Existencia&#10;Cantidad disponible del producto."/>
-                            </tooltip>
-
-                        </TextField>
+                                   promptText="Ej. 25"/>
 
                     </VBox>
 
                 </HBox>
 
+
                 <CheckBox fx:id="chkActivo"
-                          text="Producto activo">
+                          text="Producto activo"/>
 
-                    <tooltip>
-                        <Tooltip text="Estado del producto&#10;Indica si el producto se encuentra activo."/>
-                    </tooltip>
-
-                </CheckBox>
 
                 <VBox styleClass="image-container"
                       alignment="CENTER"
@@ -160,18 +132,14 @@
 
                 </VBox>
 
+
                 <Button fx:id="btnImagen"
                         text="Seleccionar imagen"
                         styleClass="button-secondary"
                         onAction="#seleccionarImagen"
                         prefHeight="31"
-                        maxWidth="Infinity">
+                        maxWidth="Infinity"/>
 
-                    <tooltip>
-                        <Tooltip text="Seleccionar imagen&#10;Permite elegir una imagen para el producto."/>
-                    </tooltip>
-
-                </Button>
 
                 <HBox spacing="8">
 
@@ -181,13 +149,8 @@
                             onAction="#guardar"
                             prefHeight="34"
                             maxWidth="Infinity"
-                            HBox.hgrow="ALWAYS">
+                            HBox.hgrow="ALWAYS"/>
 
-                        <tooltip>
-                            <Tooltip text="Guardar producto&#10;Registra o actualiza el producto."/>
-                        </tooltip>
-
-                    </Button>
 
                     <Button fx:id="btnCancelarEdicion"
                             text="Cancelar"
@@ -195,29 +158,19 @@
                             onAction="#cancelarEdicion"
                             prefHeight="34"
                             visible="false"
-                            managed="false">
+                            managed="false"/>
 
-                        <tooltip>
-                            <Tooltip text="Cancelar edición&#10;Cancela los cambios y vuelve al modo de registro."/>
-                        </tooltip>
-
-                    </Button>
 
                     <Button fx:id="btnCerrar"
                             text="Cerrar"
                             styleClass="button-danger"
                             onAction="#cerrar"
-                            prefHeight="34">
-
-                        <tooltip>
-                            <Tooltip text="Cerrar ventana&#10;Cierra la gestión de productos."/>
-                        </tooltip>
-
-                    </Button>
+                            prefHeight="34"/>
 
                 </HBox>
 
             </VBox>
+
 
             <VBox styleClass="card"
                   spacing="10"
@@ -226,8 +179,9 @@
                 <Label text="Productos registrados"
                        styleClass="card-title"/>
 
-                <Label text="Busque productos por código, nombre o categoría."
+                <Label text="Busque y filtre productos registrados en PostgreSQL."
                        styleClass="card-subtitle"/>
+
 
                 <HBox spacing="8"
                       alignment="CENTER_LEFT">
@@ -235,53 +189,50 @@
                     <TextField fx:id="txtBuscar"
                                promptText="Buscar por código, nombre o categoría..."
                                prefHeight="34"
-                               HBox.hgrow="ALWAYS">
+                               HBox.hgrow="ALWAYS"/>
 
-                        <tooltip>
-                            <Tooltip text="Buscar productos&#10;Filtra el listado por código, nombre o categoría."/>
-                        </tooltip>
 
-                    </TextField>
+                    <ComboBox fx:id="cmbFiltroEstado"
+                              prefWidth="120"
+                              prefHeight="34"
+                              promptText="Estado"/>
+
+
+                    <ComboBox fx:id="cmbFiltroCategoria"
+                              prefWidth="140"
+                              prefHeight="34"
+                              promptText="Categoría"/>
+
 
                     <Button fx:id="btnLimpiarBusqueda"
                             text="Limpiar"
                             styleClass="button-secondary"
                             prefHeight="34"
-                            onAction="#limpiarBusqueda">
+                            onAction="#limpiarBusqueda"/>
 
-                        <tooltip>
-                            <Tooltip text="Limpiar búsqueda&#10;Muestra nuevamente todos los productos."/>
-                        </tooltip>
+                </HBox>
 
-                    </Button>
+
+                <HBox spacing="8"
+                      alignment="CENTER_RIGHT">
 
                     <Button fx:id="btnEditar"
                             text="Editar producto"
                             styleClass="button-primary"
                             prefHeight="34"
                             onAction="#editarProducto"
-                            disable="true">
+                            disable="true"/>
 
-                        <tooltip>
-                            <Tooltip text="Editar producto&#10;Carga el producto seleccionado para modificarlo."/>
-                        </tooltip>
-
-                    </Button>
 
                     <Button fx:id="btnEliminar"
                             text="Eliminar producto"
                             styleClass="button-danger"
                             prefHeight="34"
                             onAction="#eliminarProducto"
-                            disable="true">
-
-                        <tooltip>
-                            <Tooltip text="Eliminar producto&#10;Elimina el producto seleccionado del catálogo."/>
-                        </tooltip>
-
-                    </Button>
+                            disable="true"/>
 
                 </HBox>
+
 
                 <TableView fx:id="tblProductos"
                            VBox.vgrow="ALWAYS"
@@ -311,11 +262,12 @@
 
                         <TableColumn fx:id="colActivo"
                                      text="Estado"
-                                     prefWidth="80"/>
+                                     prefWidth="90"/>
 
                     </columns>
 
                 </TableView>
+
 
                 <Label fx:id="lblContador"
                        text="Mostrando 0 productos"
@@ -326,6 +278,7 @@
         </HBox>
 
     </center>
+
 
     <bottom>
 
