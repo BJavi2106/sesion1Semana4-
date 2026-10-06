@@ -189,7 +189,7 @@ public class ProductoController {
 
 
     private void cargarCategoriasDesdeBD()
-            throws Exception {
+            throws java.sql.SQLException {
 
         List<Categoria> lista =
                 categoriaDAO.listar();
@@ -216,7 +216,7 @@ public class ProductoController {
 
 
     private void cargarProductosDesdeBD()
-            throws Exception {
+            throws java.sql.SQLException {
 
         List<Producto> lista =
                 productoDAO.listar();
