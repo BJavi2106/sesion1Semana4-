@@ -12,16 +12,12 @@ public class MenuPrincipalController {
 
     @FXML
     private void abrirProductos() {
-
         try {
-
             SceneManager.abrirVentana(
                     "/ni/edu/uam/facturacion/fxml/producto-view.fxml",
                     "Gestión de productos"
             );
-
         } catch (IOException e) {
-
             mostrarError(
                     "No fue posible abrir Productos.\n\n"
                             + e.getMessage()
@@ -30,17 +26,28 @@ public class MenuPrincipalController {
     }
 
     @FXML
-    private void abrirConfiguracion() {
-
+    private void abrirCategorias() {
         try {
+            SceneManager.abrirVentana(
+                    "/ni/edu/uam/facturacion/fxml/categoria-view.fxml",
+                    "Gestión de categorías"
+            );
+        } catch (IOException e) {
+            mostrarError(
+                    "No fue posible abrir Categorías.\n\n"
+                            + e.getMessage()
+            );
+        }
+    }
 
+    @FXML
+    private void abrirConfiguracion() {
+        try {
             SceneManager.abrirVentana(
                     "/ni/edu/uam/facturacion/fxml/configuracion-view.fxml",
                     "Configuración del sistema"
             );
-
         } catch (IOException e) {
-
             mostrarError(
                     "No fue posible abrir Configuración.\n\n"
                             + e.getMessage()
@@ -50,14 +57,13 @@ public class MenuPrincipalController {
 
     @FXML
     private void acercaDe() {
-
         Alert alerta = new Alert(
                 Alert.AlertType.INFORMATION,
                 "EL GÜEGÜENSE\n\n"
                         + "Sistema de Facturación\n"
                         + "Versión 1.0\n\n"
                         + "Sistema desarrollado para la "
-                        + "gestión y control de productos.",
+                        + "gestión y control de productos y categorías.",
                 ButtonType.OK
         );
 
@@ -77,7 +83,6 @@ public class MenuPrincipalController {
 
     @FXML
     private void salir() {
-
         Alert alerta = new Alert(
                 Alert.AlertType.CONFIRMATION,
                 "¿Desea cerrar la aplicación?",
@@ -91,13 +96,11 @@ public class MenuPrincipalController {
         if (alerta.showAndWait().orElse(
                 ButtonType.CANCEL
         ) == ButtonType.OK) {
-
             Platform.exit();
         }
     }
 
     private void mostrarError(String mensaje) {
-
         Alert alerta = new Alert(
                 Alert.AlertType.ERROR,
                 mensaje,
